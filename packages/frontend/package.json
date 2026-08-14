@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
+    "gen:api": "openapi-typescript http://localhost:8000/openapi.json -o src/lib/api-types.ts",
     "lint": "oxlint",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -13,6 +14,7 @@
   },
   "dependencies": {
     "@tailwindcss/vite": "^4.3.3",
+    "openapi-fetch": "^0.17.0",
     "react": "^19.2.8",
     "react-dom": "^19.2.8",
     "react-router": "^8.3.0",
@@ -23,6 +25,7 @@
     "@types/react": "^19.2.17",
     "@types/react-dom": "^19.2.3",
     "@vitejs/plugin-react": "^6.0.4",
+    "openapi-typescript": "^7.13.0",
     "oxlint": "^1.75.0",
     "prettier": "^3.9.6",
     "typescript": "~6.0.2",
