@@ -1,0 +1,9 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+
+allowBuilds:
+  # drizzle-kit shells out to esbuild, which needs its postinstall to run.
+  esbuild: true
+  # Pulled in by @nestjs/swagger purely for install-time analytics. Denied.
+  '@scarf/scarf': false

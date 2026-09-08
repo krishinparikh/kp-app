@@ -1,0 +1,22 @@
+FROM node:24-alpine
+
+# Pin pnpm to the version that produced the lockfile.
+RUN npm install -g pnpm@11.10.0
+
+WORKDIR /repo
+
+# Workspace manifests first so this layer caches across source edits. Every
+# workspace member's package.json has to be present or --frozen-lockfile sees a
+# mismatch against the root lockfile.
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
+COPY apps/server/package.json apps/server/
+COPY apps/web/package.json apps/web/
+RUN pnpm install --frozen-lockfile --filter server...
+
+COPY apps/server apps/server
+
+WORKDIR /repo/apps/server
+
+EXPOSE 8000
+
+CMD ["pnpm", "dev"]

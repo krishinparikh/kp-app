@@ -1,3 +1,5 @@
+# Finance App
+
 Look at docs/ for more info on this project
 
 ## Code Standards

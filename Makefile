@@ -1,4 +1,4 @@
-.PHONY: up down build logs ps migrate revision test shell-backend shell-frontend clean
+.PHONY: up down build logs ps migrate revision test lint shell-server shell-web clean
 
 up: ## Start the dev stack in the background
 	docker compose up -d
@@ -15,20 +15,23 @@ logs: ## Tail logs from all services
 ps: ## Show service status
 	docker compose ps
 
-migrate: ## Apply Alembic migrations
-	docker compose exec backend uv run --frozen alembic upgrade head
+migrate: ## Apply Drizzle migrations
+	docker compose exec server pnpm db:migrate
 
-revision: ## Autogenerate a migration: make revision m="add accounts"
-	docker compose exec backend uv run --frozen alembic revision --autogenerate -m "$(m)"
+revision: ## Generate a migration from schema changes: make revision m="add accounts"
+	docker compose exec server pnpm db:generate --name="$(m)"
 
-test: ## Run the backend test suite
-	docker compose exec backend uv run --frozen pytest
+test: ## Run the server test suite
+	docker compose exec server pnpm test
 
-shell-backend: ## Open a shell in the backend container
-	docker compose exec backend bash
+lint: ## Lint every workspace package
+	pnpm lint
 
-shell-frontend: ## Open a shell in the frontend container
-	docker compose exec frontend sh
+shell-server: ## Open a shell in the server container
+	docker compose exec server sh
+
+shell-web: ## Open a shell in the web container
+	docker compose exec web sh
 
 clean: ## Stop the stack and delete the database volume
 	docker compose down -v
