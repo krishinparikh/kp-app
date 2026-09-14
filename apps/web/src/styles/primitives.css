@@ -1,0 +1,40 @@
+/*
+ * Layer 1 — primitive tokens.
+ *
+ * Raw values, named for what they ARE. Literals only: a primitive never
+ * references another token. Deliberately NOT inside `@theme`, so Tailwind
+ * generates no utilities for them — there is no `bg-neutral-500` class, which
+ * is what keeps components from reaching past the semantic layer.
+ *
+ * Only src/styles/semantics.css may read these.
+ */
+
+:root {
+  /* Neutral ramp. Lightness-only oklch, so it stays hue-neutral in both themes. */
+  --neutral-0: oklch(1 0 0);
+  --neutral-50: oklch(0.985 0 0);
+  --neutral-100: oklch(0.97 0 0);
+  --neutral-200: oklch(0.922 0 0);
+  --neutral-300: oklch(0.87 0 0);
+  --neutral-400: oklch(0.708 0 0);
+  --neutral-500: oklch(0.556 0 0);
+  --neutral-600: oklch(0.439 0 0);
+  --neutral-700: oklch(0.371 0 0);
+  --neutral-800: oklch(0.269 0 0);
+  --neutral-900: oklch(0.205 0 0);
+  --neutral-950: oklch(0.145 0 0);
+
+  /* Translucent white, for borders that sit on top of dark surfaces. */
+  --neutral-0-alpha-10: oklch(1 0 0 / 10%);
+  --neutral-0-alpha-15: oklch(1 0 0 / 15%);
+
+  /* Red. 400 is the lighter step dark surfaces need to stay legible. */
+  --red-400: oklch(0.704 0.191 22.216);
+  --red-500: oklch(0.577 0.245 27.325);
+
+  /* Blue. */
+  --blue-500: oklch(0.488 0.243 264.376);
+
+  /* The one radius every other radius is derived from. */
+  --radius-base: 0.625rem;
+}

@@ -1,5 +1,12 @@
 {
   "files": [],
+  // Duplicated from tsconfig.app.json so tools that only read this file
+  // (the shadcn CLI, editors) resolve `@/*` too.
+  "compilerOptions": {
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  },
   "references": [
     { "path": "./tsconfig.app.json" },
     { "path": "./tsconfig.node.json" }

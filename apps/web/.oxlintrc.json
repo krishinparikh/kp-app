@@ -4,5 +4,15 @@
   "rules": {
     "react/rules-of-hooks": "error",
     "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
+  },
+  "overrides": [
+    {
+      // shadcn components ship a `cva` variants object next to the component,
+      // which the fast-refresh rule can't see past.
+      "files": ["src/components/primitives/**/*.tsx"],
+      "rules": {
+        "react/only-export-components": "off"
+      }
+    }
+  ]
 }

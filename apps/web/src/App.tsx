@@ -7,17 +7,17 @@ function App() {
   const page = findPage(pathname)
 
   return (
-    <div className="min-h-screen bg-gray-50 text-gray-900">
+    <div className="min-h-screen bg-background text-foreground">
       {/* React 19 hoists these into <head>. */}
       <title>{page ? `${page.title} · ${site.name}` : site.name}</title>
       <meta name="description" content={site.description} />
-      <header className="border-b border-gray-200 bg-white">
+      <header className="border-b border-border bg-card">
         <nav className="mx-auto flex max-w-5xl items-center gap-6 px-6 py-4">
           <span className="font-semibold">{site.name}</span>
           {navPages.map(({ path, nav }) => (
             <Link
               key={path}
-              className="text-sm text-gray-600 hover:text-gray-900"
+              className="text-sm text-muted-foreground hover:text-foreground"
               to={path}
             >
               {nav}

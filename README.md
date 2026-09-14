@@ -3,11 +3,12 @@
 A pnpm + Turborepo monorepo with a React web app and a NestJS API, backed by
 PostgreSQL.
 
-| Package             | Stack                                                     | Dev port |
-| ------------------- | --------------------------------------------------------- | -------- |
-| `apps/web`          | React 19, TypeScript, Vite 8, Tailwind v4, React Router 8 | 5173     |
-| `apps/server`       | NestJS 12, Drizzle ORM, Zod, TypeScript                   | 8000     |
-| `db` (compose only) | PostgreSQL 17                                             | 5432     |
+| Package              | Stack                                                                | Dev port |
+| -------------------- | -------------------------------------------------------------------- | -------- |
+| `apps/web`           | React 19, TypeScript, Vite 8, Tailwind v4, React Router 8, shadcn/ui | 5173     |
+| `apps/web` Storybook | Component workshop for `src/components/primitives/`                  | 6006     |
+| `apps/server`        | NestJS 12, Drizzle ORM, Zod, TypeScript                              | 8000     |
+| `db` (compose only)  | PostgreSQL 17                                                        | 5432     |
 
 `apps/` holds deployables; `packages/` holds code shared between them. See
 [apps/README.md](apps/README.md) and [packages/README.md](packages/README.md).
@@ -66,14 +67,15 @@ The `make` targets wrap `docker compose`, so the stack must be running.
 
 Turborepo drives tasks across packages from the repo root, container or not:
 
-| Command          | What it does                   |
-| ---------------- | ------------------------------ |
-| `pnpm dev`       | Run every package's dev server |
-| `pnpm build`     | Build every package            |
-| `pnpm typecheck` | Type-check every package       |
-| `pnpm lint`      | Lint every package             |
-| `pnpm test`      | Test every package             |
-| `pnpm format`    | Prettier across the repo       |
+| Command          | What it does                                 |
+| ---------------- | -------------------------------------------- |
+| `pnpm dev`       | Run every package's dev server               |
+| `pnpm build`     | Build every package                          |
+| `pnpm typecheck` | Type-check every package                     |
+| `pnpm lint`      | Lint every package                           |
+| `pnpm test`      | Test every package                           |
+| `pnpm storybook` | Run Storybook (web) on http://localhost:6006 |
+| `pnpm format`    | Prettier across the repo                     |
 
 Target one package with `--filter`, e.g. `pnpm --filter server test`.
 
