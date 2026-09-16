@@ -7,6 +7,10 @@ An opinionated bootstrap for agent-first, full-stack apps. Inspired by these gui
 - **Type-safe end to end** — one set of types spans the database, API, and UI.
   Agents write better code against a contract that's checked rather than
   inferred, and that payoff grows with the codebase.
+- **Opinionated framework** — NestJS gives every piece of code one obvious
+  place to live. Modules, controllers, and services keep agents on the MVC
+  rails instead of inventing a new structure per feature, so the codebase stays
+  organized as it grows.
 - **Lightweight** — nothing is built for scale it doesn't have. It's a
   monorepo: if you need Python, add a service under `apps/` and call it over
   HTTP instead of bending the stack around it.
@@ -161,6 +165,36 @@ After that, `api.GET('/health')` in `apps/web/src/lib/api.ts` is fully typed and
 a server change surfaces in the web app as a type error. Re-run `gen:api`
 whenever you change a route or DTO.
 
+## Documentation
+
+Three places hold project knowledge, and each has a job:
+
+- `AGENTS.md` at the repo root — the rules every agent and contributor follows.
+  `CLAUDE.md` is a symlink to it, so no single tool owns the instructions.
+- `docs/` — the longer-form context that doesn't fit in a rules file.
+- `README.md` inside a folder — how that specific folder works, next to the
+  code it describes.
+
+```
+docs/
+├── product/
+│   ├── prd.md              # what we're building and why
+│   └── user-journeys.md    # the flows a user moves through
+├── architecture/
+│   ├── high-level.md       # how the system fits together
+│   ├── file-structure.md   # where code goes and why
+│   └── db.csv              # the data model
+├── rules/
+│   ├── frontend-design.md  # UI conventions
+│   └── write-documentation.md
+└── workflows/
+    ├── sdlc.md             # how a change gets from idea to shipped
+    └── zero-to-one.md      # how a new project gets off the ground
+```
+
+These files are scaffolded but still empty — fill them in as the project takes
+shape. When you change something, update the doc that covers it.
+
 ## Layout
 
 ```
@@ -171,6 +205,10 @@ kp-app/
 ├── turbo.json              # task graph and caching
 ├── pnpm-workspace.yaml     # workspace members
 ├── docs/
+│   ├── product/            # PRD, user journeys
+│   ├── architecture/       # system design, file structure, data model
+│   ├── rules/              # conventions agents follow
+│   └── workflows/          # how work gets done
 ├── apps/
 │   ├── server/
 │   │   ├── src/
