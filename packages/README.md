@@ -12,8 +12,8 @@ packages/
 
 ## Adding a package
 
-1. Create the folder with a `package.json` named `@finance-app/<name>`.
-2. Add it to a consumer's dependencies as `"@finance-app/<name>": "workspace:*"`.
+1. Create the folder with a `package.json` named `@kp-app/<name>`.
+2. Add it to a consumer's dependencies as `"@kp-app/<name>": "workspace:*"`.
 3. Run `pnpm install` from the repo root to link it.
 
 Keep the runtime boundary in mind: `web` bundles for the browser and `server`

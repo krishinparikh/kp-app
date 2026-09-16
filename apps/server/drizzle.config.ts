@@ -17,7 +17,7 @@ export default defineConfig({
   dbCredentials: {
     url: normalizeDatabaseUrl(
       process.env.DATABASE_URL ??
-        'postgresql://finance:finance@localhost:5432/finance',
+        'postgresql://kp:kp@localhost:5432/kp',
     ),
   },
 })

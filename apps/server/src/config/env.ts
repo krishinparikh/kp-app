@@ -22,7 +22,7 @@ const envSchema = z.object({
   DATABASE_URL: z
     .string()
     .min(1)
-    .default('postgresql://finance:finance@localhost:5432/finance')
+    .default('postgresql://kp:kp@localhost:5432/kp')
     .transform(normalizeDatabaseUrl),
   CORS_ORIGINS: z
     .string()

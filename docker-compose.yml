@@ -1,18 +1,18 @@
-name: finance-app
+name: kp-app
 
 services:
   db:
     image: postgres:17-alpine
     environment:
-      POSTGRES_USER: ${POSTGRES_USER:-finance}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-finance}
-      POSTGRES_DB: ${POSTGRES_DB:-finance}
+      POSTGRES_USER: ${POSTGRES_USER:-kp}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-kp}
+      POSTGRES_DB: ${POSTGRES_DB:-kp}
     ports:
       - '${POSTGRES_PORT:-5432}:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
     healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-finance} -d ${POSTGRES_DB:-finance}']
+      test: ['CMD-SHELL', 'pg_isready -U ${POSTGRES_USER:-kp} -d ${POSTGRES_DB:-kp}']
       interval: 5s
       timeout: 5s
       retries: 10
@@ -23,7 +23,7 @@ services:
       context: .
       dockerfile: apps/server/Dockerfile.dev
     environment:
-      DATABASE_URL: postgresql://${POSTGRES_USER:-finance}:${POSTGRES_PASSWORD:-finance}@db:5432/${POSTGRES_DB:-finance}
+      DATABASE_URL: postgresql://${POSTGRES_USER:-kp}:${POSTGRES_PASSWORD:-kp}@db:5432/${POSTGRES_DB:-kp}
       CORS_ORIGINS: '["http://localhost:${FRONTEND_PORT:-5173}"]'
       # The container always listens on 8000; the host port mapping below is
       # what FRONTEND_PORT/BACKEND_PORT actually change.

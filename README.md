@@ -1,7 +1,15 @@
-# finance-app
+# kp-app
 
-A pnpm + Turborepo monorepo with a React web app and a NestJS API, backed by
-PostgreSQL.
+An opinionated bootstrap for agent-first, full-stack apps. Inspired by these guiding principles:
+
+- **Harness-agnostic** — Claude Code, Codex, Cursor, or none of the above.
+  Shared instructions live in `AGENTS.md`, so no single tool owns the project.
+- **Type-safe end to end** — one set of types spans the database, API, and UI.
+  Agents write better code against a contract that's checked rather than
+  inferred, and that payoff grows with the codebase.
+- **Lightweight** — nothing is built for scale it doesn't have. It's a
+  monorepo: if you need Python, add a service under `apps/` and call it over
+  HTTP instead of bending the stack around it.
 
 | Package              | Stack                                                                | Dev port |
 | -------------------- | -------------------------------------------------------------------- | -------- |
@@ -26,8 +34,8 @@ To run services natively instead, you'll also want:
 ## Quick start
 
 ```bash
-git clone <repo-url> finance-app
-cd finance-app
+git clone <repo-url> kp-app
+cd kp-app
 cp .env.example .env
 make up
 ```
@@ -156,7 +164,7 @@ whenever you change a route or DTO.
 ## Layout
 
 ```
-finance-app/
+kp-app/
 ├── .env.example            # template for the root .env
 ├── docker-compose.yml
 ├── Makefile

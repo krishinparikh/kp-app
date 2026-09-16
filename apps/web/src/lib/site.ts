@@ -3,6 +3,6 @@
  * belongs here rather than inline in components, so renaming is one edit.
  */
 export const site = {
-  name: 'finance-app',
+  name: 'kp-app',
   description: 'Personal finance tracking.',
 } as const

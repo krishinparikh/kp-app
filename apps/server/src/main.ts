@@ -16,7 +16,7 @@ async function bootstrap() {
   // Swagger UI at /docs and the raw schema at /openapi.json, which is what the
   // web app's `pnpm gen:api` reads.
   const openApiConfig = new DocumentBuilder()
-    .setTitle('finance-app')
+    .setTitle('kp-app')
     .setVersion('0.0.1')
     .build()
   SwaggerModule.setup(

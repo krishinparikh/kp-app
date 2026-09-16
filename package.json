@@ -1,5 +1,5 @@
 {
-  "name": "finance-app",
+  "name": "kp-app",
   "private": true,
   "packageManager": "pnpm@11.10.0",
   "engines": {
