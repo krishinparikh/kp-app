@@ -25,6 +25,10 @@ Look at docs/ for more info on this project
 - Server: validate with `@Body({ schema })`. The parameter's TypeScript annotation must be that schema's `z.infer` — NestJS does not cross-check them.
 - Web: all calls go through `api.get` / `api.post` / … in `apps/web/src/lib/api.ts`. The schema is always the second argument and drives the return type, so a drifted server throws at the boundary. Never call `axios` or `fetch` directly.
 - The package compiles to `dist/`, so run `pnpm --filter @kp-app/contract build` after editing a schema outside the dev watcher.
+- Drizzle owns storage, the contract owns the wire, and neither generates the other. `apps/server/src/modules/users/` is the worked example end to end.
+- The API is mounted at `/api/v1`. Controllers take the bare resource name (`@Controller(usersResource)`); the prefix comes from `setup-app.ts` and the contract's `*Path` exports carry it for clients. Never hardcode `/api/v1` in a controller or a call site.
+- Server code is split by role: `config/` and `db/` are shared infrastructure, `modules/<name>/` is one API slice each (module + controller + service).
+- If a table gains a column the API must not expose, select columns explicitly in the service rather than `select()` — an extra column otherwise flows straight to the client.
 - Details in `packages/contract/README.md`.
 
 ## Agentic Development

@@ -53,6 +53,7 @@ Once it's up:
 - Web app — http://localhost:5173
 - API — http://localhost:8000
 - Health check — http://localhost:8000/health
+- API — http://localhost:8000/api/v1 (e.g. `/api/v1/users`)
 
 Source directories are bind-mounted, so edits on your machine hot-reload inside
 the containers. No rebuild needed unless you change dependencies.
@@ -235,7 +236,9 @@ kp-app/
 │   │   │   ├── app.module.ts
 │   │   │   ├── config/     # Zod-validated environment
 │   │   │   ├── db/         # Drizzle client + schema
-│   │   │   └── health/     # GET /health
+│   │   │   └── modules/    # one folder per feature module
+│   │   │       ├── health/ # GET /health
+│   │   │       └── users/  # CRUD example over the users table
 │   │   ├── drizzle/        # generated migrations
 │   │   └── test/
 │   ├── web/

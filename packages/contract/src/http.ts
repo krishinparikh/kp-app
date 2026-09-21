@@ -1,6 +1,13 @@
 import { z } from 'zod'
 
 /**
+ * Where the versioned API is mounted. The server builds this from
+ * `setGlobalPrefix` + `enableVersioning`; clients get the finished path from
+ * the `*Path` exports below, so neither side hardcodes it.
+ */
+export const apiPrefix = '/api/v1'
+
+/**
  * The body NestJS puts on an HttpException. It comes in three shapes: a bare
  * message with no `error` key, a message plus status text, or a list of
  * messages when a validation pipe reports several issues.

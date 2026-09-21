@@ -4,7 +4,8 @@ import { APP_PIPE } from '@nestjs/core'
 
 import { validateEnv } from './config/env.js'
 import { DbModule } from './db/db.module.js'
-import { HealthModule } from './health/health.module.js'
+import { HealthModule } from './modules/health/health.module.js'
+import { UsersModule } from './modules/users/users.module.js'
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { HealthModule } from './health/health.module.js'
     }),
     DbModule,
     HealthModule,
+    UsersModule,
   ],
   providers: [
     {

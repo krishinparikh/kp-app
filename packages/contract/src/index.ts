@@ -2,3 +2,4 @@
 // they use the JSON shape — a timestamp is `z.string()`, never `z.date()`.
 export * from './health.js'
 export * from './http.js'
+export * from './users.js'
