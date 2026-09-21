@@ -1,4 +1,5 @@
 import type { Preview } from '@storybook/react-vite'
+import { TooltipProvider } from '../src/components/primitives'
 // Tailwind + the shadcn design tokens. Without this the canvas is unstyled.
 import '../src/index.css'
 
@@ -33,7 +34,10 @@ const preview: Preview = {
         style={{ colorScheme: globals.theme }}
       >
         <div className="bg-background text-foreground p-6">
-          <Story />
+          {/* Every Radix tooltip needs a provider above it. */}
+          <TooltipProvider delayDuration={0}>
+            <Story />
+          </TooltipProvider>
         </div>
       </div>
     ),

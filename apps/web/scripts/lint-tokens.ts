@@ -44,21 +44,37 @@ function declarations(file: string): Declaration[] {
   const out: Declaration[] = []
   let depth = 0
   let block = ''
+  // A long value wraps across lines once prettier has been over the file, e.g.
+  // `--shadow-lg:\n  0 10px …, 0 4px …;`. Buffer until the semicolon arrives.
+  let pending: Omit<Declaration, 'block'> | null = null
 
   fs.readFileSync(file, 'utf8')
     .split('\n')
     .forEach((text, index) => {
-      const declaration = /^\s*(--[a-zA-Z0-9-]*\*?)\s*:\s*([^;]+);/.exec(text)
-      if (declaration) {
-        out.push({
-          name: declaration[1],
-          value: declaration[2].trim(),
-          line: index + 1,
-          block,
-        })
-      } else if (depth === 0 && text.trimEnd().endsWith('{')) {
-        block = text.replace('{', '').trim()
+      const end = text.indexOf(';')
+
+      if (pending) {
+        pending.value =
+          `${pending.value} ${(end === -1 ? text : text.slice(0, end)).trim()}`.trim()
+        if (end !== -1) {
+          out.push({ ...pending, block })
+          pending = null
+        }
+      } else {
+        const declaration = /^\s*(--[a-zA-Z0-9-]*\*?)\s*:\s*([^;]*)/.exec(text)
+        if (declaration) {
+          const started = {
+            name: declaration[1],
+            value: declaration[2].trim(),
+            line: index + 1,
+          }
+          if (end === -1) pending = started
+          else out.push({ ...started, block })
+        } else if (depth === 0 && text.trimEnd().endsWith('{')) {
+          block = text.replace('{', '').trim()
+        }
       }
+
       depth += (text.match(/{/g) ?? []).length - (text.match(/}/g) ?? []).length
     })
 

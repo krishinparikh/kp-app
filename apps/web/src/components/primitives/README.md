@@ -21,6 +21,23 @@ Import from the barrel:
 import { Button } from '@/components/primitives'
 ```
 
+## What's here
+
+| Group    | Components                                                                    |
+| -------- | ----------------------------------------------------------------------------- |
+| Forms    | `Button` `Input` `Textarea` `Label` `Checkbox` `RadioGroup` `Select` `Switch` |
+| Layout   | `Card` `Separator` `Tabs` `Accordion` `Table`                                 |
+| Content  | `Avatar` `Badge` `Alert` `Skeleton`                                           |
+| Overlays | `Dialog` `AlertDialog` `Sheet` `Popover` `DropdownMenu` `Tooltip`             |
+
+Two of these need setup above them:
+
+- **`TooltipProvider`** wraps the whole app (`src/main.tsx`) and the Storybook
+  canvas (`.storybook/preview.tsx`). A `Tooltip` without one throws. Tests wrap
+  their own, so they don't depend on either.
+- **`AlertDialog`** can't be dismissed by clicking outside. Use it for
+  destructive or irreversible choices; use `Dialog` for everything else.
+
 ## Adding a component
 
 ```bash
@@ -49,6 +66,11 @@ Browse the catalogue at [ui.shadcn.com/docs/components](https://ui.shadcn.com/do
 - **Tests assert behaviour, not classes.** Query by role, click with
   `@testing-library/user-event`, and leave Tailwind output alone — it changes
   whenever the design tokens do.
+- **Overlays open for real in tests.** `vitest.setup.ts` stubs the browser APIs
+  Radix needs and jsdom lacks (`ResizeObserver`, pointer capture,
+  `scrollIntoView`, `matchMedia`), so a dialog or menu can be opened and
+  asserted on rather than mocked. Portalled content only exists once open, so
+  reach for `findByRole` over `getByRole`.
 - **`react/only-export-components` is off here** (see `.oxlintrc.json`). Every
   shadcn component exports a `cva` variants object next to the component, which
   the fast-refresh rule can't see past.

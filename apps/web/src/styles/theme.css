@@ -119,6 +119,7 @@
   --tracking-tight: -0.025em;
   --tracking-normal: 0em;
   --tracking-wide: 0.025em;
+  --tracking-widest: 0.1em;
 
   --leading-none: 1;
   --leading-tight: 1.25;
@@ -155,6 +156,7 @@
   --shadow-xl:
     0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
 
+  --blur-xs: 4px;
   --blur-sm: 8px;
   --blur-md: 12px;
   --blur-lg: 16px;
