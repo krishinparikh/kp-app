@@ -153,17 +153,27 @@ is convenient while prototyping and a bad idea anywhere else.
 
 ## The API contract
 
-`packages/contract` holds the request and response shapes as Zod schemas, with
+`packages/shared` holds the request and response shapes as Zod schemas, with
 the TypeScript types inferred from them. Both apps import it, so there is one
 definition per endpoint and no generation step — edit a schema and both sides
 move together.
 
+It splits into three folders that stack in one direction, one file per resource
+in each:
+
 ```ts
-// packages/contract/src/health.ts
+// constants/health.ts
 export const healthPath = '/health'
+export const healthStatuses = ['ok', 'degraded'] as const
+
+// schemas/health.ts — reads the constants
 export const healthResponse = z.object({ status: z.enum(healthStatuses) })
+
+// types/health.ts — reads the schemas
 export type HealthResponse = z.infer<typeof healthResponse>
 ```
+
+Apps import from the package root, never a subfolder.
 
 Both ends enforce it at runtime, not just at compile time:
 
@@ -176,13 +186,13 @@ Both ends enforce it at runtime, not just at compile time:
 
 The schemas describe the JSON on the wire, not in-memory types: a timestamp is
 `z.string()`, never `z.date()`. See
-[packages/contract/README.md](packages/contract/README.md).
+[packages/shared/README.md](packages/shared/README.md).
 
 The package compiles to `dist/`, because the server runs `node dist/main` with
 no TypeScript loader. `pnpm dev` and `make up` both run a `tsc --watch` for it,
 so day to day you just edit a schema. One wrinkle: `nest start --watch` only
-watches `apps/server/src`, so a **contract-only** edit needs
-`docker compose restart server` to reach the API. Editing a contract and the
+watches `apps/server/src`, so a **shared-package-only** edit needs
+`docker compose restart server` to reach the API. Editing a schema and the
 controller that uses it — the normal case — restarts on its own.
 
 ## Documentation
@@ -241,18 +251,27 @@ kp-app/
 │   │   │       └── users/  # CRUD example over the users table
 │   │   ├── drizzle/        # generated migrations
 │   │   └── test/
-│   ├── web/
+│   ├── web/                # Vite + React Router
 │   │   └── src/
 │   │       ├── main.tsx    # router setup
 │   │       ├── App.tsx     # layout shell
 │   │       ├── app/        # pages + route list
-│   │       └── lib/        # API client, parses against the contract
-│   ├── landing/            # empty placeholder
+│   │       ├── components/ # app-only components
+│   │       └── lib/        # API client, parses against the schemas
+│   ├── landing/            # Next.js landing page
+│   │   └── src/app/        # App Router
 │   ├── mcp-app/            # empty placeholder
 │   └── mobile/             # empty placeholder
 └── packages/
-    ├── contract/           # Zod schemas shared by server and web
-    └── ui/                 # empty placeholder
+    ├── shared/             # the API contract
+    │   └── src/
+    │       ├── constants/  # resource names and paths
+    │       ├── schemas/    # Zod schemas
+    │       └── types/      # types inferred from the schemas
+    └── ui/                 # design tokens + React components
+        └── src/
+            ├── tokens/     # primitives, semantics, theme
+            └── components/ # shadcn primitives + composites
 ```
 
 ## Troubleshooting

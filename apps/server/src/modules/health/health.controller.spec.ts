@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { healthResponse } from '@kp-app/contract'
+import { healthResponse } from '@kp-app/shared'
 
 import { HealthController } from './health.controller.js'
 

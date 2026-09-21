@@ -6,7 +6,7 @@ import {
   userList,
   usersPath,
   type CreateUser,
-} from '@kp-app/contract'
+} from '@kp-app/shared'
 import request from 'supertest'
 
 import { AppModule } from './../src/app.module.js'

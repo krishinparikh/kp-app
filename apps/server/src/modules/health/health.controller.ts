@@ -1,5 +1,5 @@
 import { Controller, Get, VERSION_NEUTRAL } from '@nestjs/common'
-import { healthResource, type HealthResponse } from '@kp-app/contract'
+import { healthResource, type HealthResponse } from '@kp-app/shared'
 
 @Controller({ path: healthResource, version: VERSION_NEUTRAL })
 export class HealthController {

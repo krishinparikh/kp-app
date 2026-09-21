@@ -75,7 +75,7 @@ src/
 - Pages live in `src/app/<name>/Page.tsx` and are listed in `src/app/routes.ts`,
   which `main.tsx` maps into `<Route>` elements.
 - Every API call goes through `api.get` / `api.post` / … in `src/lib/api.ts`.
-  The schema from `@kp-app/contract` is always the second argument and drives
+  The schema from `@kp-app/shared` is always the second argument and drives
   the return type, so a drifted server throws at the boundary. Never reach for
   `axios` or `fetch` directly, and never redeclare a response shape here.
 - Under Docker, file watching falls back to polling (`VITE_IN_DOCKER=1`), because

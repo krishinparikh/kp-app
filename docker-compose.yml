@@ -35,10 +35,11 @@ services:
       # Anonymous volume keeps the container's node_modules from being shadowed
       # by the bind mount above.
       - /repo/apps/server/node_modules
-      # Only the contract's src/. Its dist/ and node_modules/ stay image-owned,
+      # Only the shared package's src/. Its dist/ and node_modules/ stay
+      # image-owned,
       # so the container always boots against a valid build and the two
       # containers' tsc watches never write to the same files.
-      - ./packages/contract/src:/repo/packages/contract/src
+      - ./packages/shared/src:/repo/packages/shared/src
     depends_on:
       db:
         condition: service_healthy
@@ -70,7 +71,11 @@ services:
       # shadowed by the host's darwin build.
       - /repo/apps/web/node_modules
       # See the server service — only src/ is mounted, for the same reasons.
-      - ./packages/contract/src:/repo/packages/contract/src
+      - ./packages/shared/src:/repo/packages/shared/src
+      # @kp-app/ui has no build, so Vite reads these files directly. Its
+      # tokens/ and components/ both need to reach the container for a style
+      # or component edit to hot-reload.
+      - ./packages/ui/src:/repo/packages/ui/src
     depends_on:
       server:
         condition: service_started

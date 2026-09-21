@@ -1,5 +1,5 @@
 {
-  "name": "@kp-app/contract",
+  "name": "@kp-app/shared",
   "version": "0.0.0",
   "private": true,
   "type": "module",

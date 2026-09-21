@@ -15,7 +15,7 @@ import {
   type CreateUser,
   type UpdateUser,
   type User,
-} from '@kp-app/contract'
+} from '@kp-app/shared'
 
 import { UsersService } from './users.service.js'
 

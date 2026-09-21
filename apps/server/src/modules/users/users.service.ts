@@ -4,7 +4,7 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common'
-import type { CreateUser, UpdateUser, User } from '@kp-app/contract'
+import type { CreateUser, UpdateUser, User } from '@kp-app/shared'
 import { asc, eq } from 'drizzle-orm'
 
 import { DB, type Database } from '../../db/db.module.js'

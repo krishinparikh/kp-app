@@ -1,13 +1,6 @@
 import { z } from 'zod'
 
 /**
- * Where the versioned API is mounted. The server builds this from
- * `setGlobalPrefix` + `enableVersioning`; clients get the finished path from
- * the `*Path` exports below, so neither side hardcodes it.
- */
-export const apiPrefix = '/api/v1'
-
-/**
  * The body NestJS puts on an HttpException. It comes in three shapes: a bare
  * message with no `error` key, a message plus status text, or a list of
  * messages when a validation pipe reports several issues.
@@ -21,9 +14,14 @@ export const apiErrorBody = z.looseObject({
   error: z.string().optional(),
 })
 
-export type ApiErrorBody = z.infer<typeof apiErrorBody>
-
-/** Flattens `message` to one line — the validation pipe returns a list. */
-export function apiErrorMessage(body: ApiErrorBody): string {
+/**
+ * Flattens `message` to one line — the validation pipe returns a list.
+ *
+ * The one function in the package, and it lives here rather than in `types/`
+ * because it is how you read this schema's output. Its parameter is inferred
+ * inline rather than imported from `types/http.ts`, which would make the two
+ * files import each other.
+ */
+export function apiErrorMessage(body: z.infer<typeof apiErrorBody>): string {
   return Array.isArray(body.message) ? body.message.join('; ') : body.message
 }

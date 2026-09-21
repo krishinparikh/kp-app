@@ -1,4 +1,4 @@
-# @kp-app/contract
+# @kp-app/shared
 
 The API contract shared by `apps/server` and `apps/web`: Zod schemas, the types
 inferred from them, and the route constants that go with them. Hand-written —
@@ -6,10 +6,33 @@ there is no code generation step.
 
 ```sh
 src/
-├── index.ts    # barrel, re-exports every module below
-├── http.ts     # the error body every endpoint can return
-└── health.ts   # one module per resource
+├── index.ts      # barrel, re-exports all three folders
+├── constants/    # resource names and paths — depends on nothing
+│   ├── http.ts     the /api/v1 prefix
+│   ├── health.ts   one file per resource
+│   └── users.ts
+├── schemas/      # the Zod schemas, which read the constants
+│   ├── http.ts     the error body every endpoint can return
+│   ├── health.ts
+│   └── users.ts
+└── types/        # the types inferred from those schemas
+    ├── http.ts
+    ├── health.ts
+    └── users.ts
 ```
+
+The three folders stack in one direction — **constants ← schemas ← types** —
+and each has its own `index.ts`. Consumers never import a subfolder; everything
+comes from the package root, so the layout can change without touching an app:
+
+```ts
+import { usersPath, user, type User } from '@kp-app/shared'
+```
+
+A resource keeps the same filename in each folder, so `users` is three small
+files rather than one long one. `apiErrorMessage` in `schemas/http.ts` is the
+package's only function; it sits with the schema it reads rather than in
+`types/`.
 
 ## Why schemas and not interfaces
 
@@ -36,14 +59,20 @@ string. An interface saying `createdAt: Date` type-checks and then crashes.
 
 ## Adding a resource
 
-1. Add `src/<resource>.ts` with its path constant, schemas, and inferred types.
-2. Re-export it from `src/index.ts` — remember the `.js` extension, this package
-   compiles as `nodenext`.
-3. Import from `@kp-app/contract` in either app. Never redeclare a response
-   shape locally.
+Three files, one per folder, all named after the resource. Remember the `.js`
+extension on every relative import — this package compiles as `nodenext`.
 
 ```ts
-export const transactionsPath = '/transactions'
+// constants/transactions.ts
+import { apiPrefix } from './http.js'
+
+export const transactionsResource = 'transactions'
+export const transactionsPath = `${apiPrefix}/${transactionsResource}`
+```
+
+```ts
+// schemas/transactions.ts
+import { z } from 'zod'
 
 export const createTransactionBody = z.object({
   amountCents: z.number().int(),
@@ -54,9 +83,20 @@ export const transaction = createTransactionBody.extend({
   id: z.uuid(),
   createdAt: z.iso.datetime(), // string on the wire, not a Date
 })
+```
+
+```ts
+// types/transactions.ts
+import type { z } from 'zod'
+
+import type { transaction } from '../schemas/transactions.js'
 
 export type Transaction = z.infer<typeof transaction>
 ```
+
+Then add a line to each folder's `index.ts`. The root barrel picks them up from
+there. Import from `@kp-app/shared` in either app, and never redeclare a
+response shape locally.
 
 ## Constraints
 
@@ -65,4 +105,6 @@ export type Transaction = z.infer<typeof transaction>
 - **No runtime imports beyond Zod.** Anything heavier belongs in the app.
 - The package compiles to `dist/`. `apps/server` runs `node dist/main` with no
   TypeScript loader, so it consumes the built JS — which is why this package has
-  a build step at all.
+  a build step at all, and why it differs from
+  [`@kp-app/ui`](../ui/README.md), which ships source because only bundlers
+  read it.

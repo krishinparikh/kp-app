@@ -28,7 +28,7 @@ import { UsersModule } from './modules/users/users.module.js'
       // pipe declared there would be silently absent from every e2e test.
       //
       // Validates any @Body/@Query/@Param given a `schema` and passes
-      // everything else through. Schemas come from @kp-app/contract, so the
+      // everything else through. Schemas come from @kp-app/shared, so the
       // web app checks against the same definitions.
       provide: APP_PIPE,
       useValue: new StandardSchemaValidationPipe({ transform: true }),

@@ -1,5 +1,5 @@
 import { VersioningType, type INestApplication } from '@nestjs/common'
-import { healthResource } from '@kp-app/contract'
+import { healthResource } from '@kp-app/shared'
 
 /**
  * Everything that shapes the URL space, in one place.

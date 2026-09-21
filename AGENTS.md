@@ -28,17 +28,19 @@ Look at docs/ for more info on this project
 - The package exposes the token linter as a `lint-tokens` binary. Every app's `lint` script runs `lint-tokens src` over its own code, so the rules hold app-side too.
 - Details in `packages/ui/src/tokens/README.md`.
 
-## API Contract (packages/contract)
-- Every request and response shape is a Zod schema in `packages/contract`, imported by both apps. Never redeclare a shape locally, and never add a server-only DTO — a second copy is the drift this package exists to prevent.
+## API Contract (packages/shared)
+- Every request and response shape is a Zod schema in `packages/shared`, imported by both apps. Never redeclare a shape locally, and never add a server-only DTO — a second copy is the drift this package exists to prevent.
 - Schemas describe the JSON on the wire, not in-memory types: a timestamp is `z.string()`, never `z.date()`. Convert after parsing.
 - Server: validate with `@Body({ schema })`. The parameter's TypeScript annotation must be that schema's `z.infer` — NestJS does not cross-check them.
 - Web: all calls go through `api.get` / `api.post` / … in `apps/web/src/lib/api.ts`. The schema is always the second argument and drives the return type, so a drifted server throws at the boundary. Never call `axios` or `fetch` directly.
-- The package compiles to `dist/`, so run `pnpm --filter @kp-app/contract build` after editing a schema outside the dev watcher.
+- The package compiles to `dist/`, so run `pnpm --filter @kp-app/shared build` after editing a schema outside the dev watcher.
 - Drizzle owns storage, the contract owns the wire, and neither generates the other. `apps/server/src/modules/users/` is the worked example end to end.
 - The API is mounted at `/api/v1`. Controllers take the bare resource name (`@Controller(usersResource)`); the prefix comes from `setup-app.ts` and the contract's `*Path` exports carry it for clients. Never hardcode `/api/v1` in a controller or a call site.
 - Server code is split by role: `config/` and `db/` are shared infrastructure, `modules/<name>/` is one API slice each (module + controller + service).
 - If a table gains a column the API must not expose, select columns explicitly in the service rather than `select()` — an extra column otherwise flows straight to the client.
-- Details in `packages/contract/README.md`.
+- `packages/shared/src` splits into `constants/` (resource names and paths), `schemas/` (Zod), and `types/` (inferred from the schemas), one file per resource in each. They stack in one direction: constants ← schemas ← types. Adding a resource means one file in each folder plus a line in that folder's `index.ts`.
+- Apps import from the package root (`@kp-app/shared`), never a subfolder. Relative imports inside the package need the `.js` extension — it compiles as `nodenext`.
+- Details in `packages/shared/README.md`.
 
 ## Agentic Development
 - Three main sources of documentation: AGENTS.md (CLAUDE.md is a symlink to it), docs/ files, and folder-specific README.md files. After making any changes, make sure the right documentation is subsequently changed too.

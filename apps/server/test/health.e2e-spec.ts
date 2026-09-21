@@ -1,6 +1,6 @@
 import { INestApplication } from '@nestjs/common'
 import { Test, TestingModule } from '@nestjs/testing'
-import { healthPath, healthResponse } from '@kp-app/contract'
+import { healthPath, healthResponse } from '@kp-app/shared'
 import request from 'supertest'
 
 import { AppModule } from './../src/app.module.js'

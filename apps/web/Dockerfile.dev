@@ -11,13 +11,18 @@ WORKDIR /repo
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/web/package.json apps/web/
 COPY apps/server/package.json apps/server/
-COPY packages/contract/package.json packages/contract/
+COPY apps/landing/package.json apps/landing/
+COPY packages/shared/package.json packages/shared/
+COPY packages/ui/package.json packages/ui/
 RUN pnpm install --frozen-lockfile --filter web...
 
-# Vite resolves @kp-app/contract through its exports map to dist/, so the
-# contract is compiled here too. Each image owns its own dist.
-COPY packages/contract packages/contract
-RUN pnpm --filter @kp-app/contract build
+# Vite resolves @kp-app/shared through its exports map to dist/, so it is
+# compiled here too. Each image owns its own dist.
+COPY packages/shared packages/shared
+RUN pnpm --filter @kp-app/shared build
+
+# @kp-app/ui ships source, so there is nothing to build — Vite compiles it.
+COPY packages/ui packages/ui
 
 COPY apps/web apps/web
 
@@ -25,6 +30,6 @@ WORKDIR /repo/apps/web
 
 EXPOSE 5173
 
-# Recompile the bind-mounted contract source, leave a tsc watch running behind
+# Recompile the bind-mounted shared source, leave a tsc watch running behind
 # it, then hand PID 1 to Vite. `--host` comes from vite.config.ts.
-CMD ["sh", "-c", "pnpm --filter @kp-app/contract build && (pnpm --filter @kp-app/contract dev &) && exec pnpm dev"]
+CMD ["sh", "-c", "pnpm --filter @kp-app/shared build && (pnpm --filter @kp-app/shared dev &) && exec pnpm dev"]

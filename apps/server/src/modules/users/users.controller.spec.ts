@@ -1,5 +1,5 @@
 import { Test, TestingModule } from '@nestjs/testing'
-import { user, type User } from '@kp-app/contract'
+import { user, type User } from '@kp-app/shared'
 
 import { UsersController } from './users.controller.js'
 import { UsersService } from './users.service.js'

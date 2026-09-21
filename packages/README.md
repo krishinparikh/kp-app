@@ -5,12 +5,14 @@ deployed on its own.
 
 ```sh
 packages/
-├── contract/   # the API contract — Zod schemas, types, route constants
+├── shared/     # the API contract — Zod schemas, types, route constants
 └── ui/         # design tokens, the stylesheet, and the React components
 ```
 
-`contract/` is imported by `web` and `server` and is the single definition of
-every request and response shape. See [contract/README.md](contract/README.md).
+`shared/` is imported by `web` and `server` and is the single definition of
+every request and response shape. Its `src/` splits into `constants/`,
+`schemas/` and `types/`, one file per resource in each. See
+[shared/README.md](shared/README.md).
 
 `ui/` is imported by every app that renders a page. It owns the design tokens,
 the stylesheet built on them, the shadcn primitives, and Storybook. See
@@ -24,12 +26,12 @@ the stylesheet built on them, the shadcn primitives, and Storybook. See
 
 Keep the runtime boundary in mind: `web` bundles for the browser and `server`
 runs on Node, so a package imported by both must avoid Node built-ins and
-browser globals alike. `contract/tsconfig.json` turns that rule into a compiler
+browser globals alike. `shared/tsconfig.json` turns that rule into a compiler
 error with `lib: ["ES2023"]` and `types: []` — `document` and `process` are both
 unavailable there. Copy that pair into any package both apps import.
 
 A package the server imports must also emit JavaScript. `apps/server` runs
 `node dist/main` with no TypeScript loader, and `nest build` compiles only
 `apps/server/src`, so raw `.ts` from a workspace package can't reach it. That is
-why `contract/` builds to `dist/` and `ui/` doesn't: only browser bundlers ever
+why `shared/` builds to `dist/` and `ui/` doesn't: only browser bundlers ever
 read `ui/`, and they compile its source themselves.
