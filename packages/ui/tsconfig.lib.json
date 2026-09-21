@@ -1,6 +1,6 @@
 {
   "compilerOptions": {
-    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.lib.tsbuildinfo",
     "target": "es2023",
     "lib": ["ES2023", "DOM"],
     "module": "esnext",
@@ -8,7 +8,8 @@
     "allowArbitraryExtensions": true,
     "skipLibCheck": true,
 
-    /* Bundler mode */
+    /* Bundler mode. Consumers import this package's source, so nothing is
+       emitted here — their bundler compiles it. */
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": true,
     "verbatimModuleSyntax": true,
@@ -16,7 +17,10 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
-    /* Path aliases. `@/x` resolves to `src/x` — shadcn components rely on this. */
+    /* `@/x` -> `src/x`. For the shadcn CLI and this package's own Vite config
+       only — no shipped file may use it, because a consuming app maps `@` to
+       its own src. `scripts/ui-add.ts` rewrites the CLI's output to relative
+       paths for exactly that reason. */
     "paths": {
       "@/*": ["./src/*"]
     },
@@ -27,5 +31,5 @@
     "erasableSyntaxOnly": true,
     "noFallthroughCasesInSwitch": true
   },
-  "include": ["src", "vitest.setup.ts"]
+  "include": ["src", ".storybook", "testing/vitest-setup.ts"]
 }

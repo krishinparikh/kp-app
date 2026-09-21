@@ -1,0 +1,3 @@
+/* The same stylesheet web imports — Tailwind, the fonts, and the design
+ * tokens, all from @kp-app/ui. Add landing-only CSS below. */
+@import '@kp-app/ui/styles.css';

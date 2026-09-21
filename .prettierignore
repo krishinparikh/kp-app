@@ -4,6 +4,11 @@ storybook-static
 .turbo
 pnpm-lock.yaml
 
+# Next.js build output and the type shim it regenerates on every build.
+.next
+next-env.d.ts
+*.tsbuildinfo
+
 # Generated migrations.
 apps/server/drizzle/
 

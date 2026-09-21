@@ -1,15 +1,20 @@
 # components
 
-UI components for the web app.
+Components that belong to this app alone.
 
 ```sh
 components/
-└── primitives/   # shadcn/ui building blocks — see primitives/README.md
+└── common/   # app-wide pieces — header, nav, layout chrome
 ```
 
-Colors, radii, and fonts come from the token layers in
-[src/styles/](../styles/README.md) — never from a literal.
+Anything a second app would also want lives in
+[`@kp-app/ui`](../../../../packages/ui/README.md) instead: `primitives/` for the
+shadcn building blocks, `composites/` for the things built out of them. Import
+them by name:
 
-`primitives/` holds unopinionated, app-agnostic pieces (Button, Input, Dialog).
-Anything that knows about a feature — a transaction row, an account picker —
-belongs in a sibling folder here, not in `primitives/`.
+```tsx
+import { Button, Card } from '@kp-app/ui'
+```
+
+Colors, radii, and fonts come from the token layers in that package — never
+from a literal. `pnpm lint` checks this folder too.

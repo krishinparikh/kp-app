@@ -1,0 +1,246 @@
+/*
+ * The theme — the app's entire public set of utility classes.
+ *
+ * `--*: initial` deletes every value Tailwind ships. Nothing exists unless it
+ * is declared below, so a component can only use what this file grants:
+ * `bg-red-500`, `text-9xl`, `font-thin` and `shadow-inner` all generate no CSS,
+ * because no entry here defines them.
+ *
+ * Every entry reads a semantic token. This file holds no values of its own —
+ * it only decides which roles become classes, and under what name.
+ *
+ * Two namespaces are the exception, and CSS forces it: `--breakpoint-*` and
+ * `--container-*` are consumed inside `@media` and `@container` conditions,
+ * where `var()` is not allowed. Tailwind emits the value verbatim, so
+ * `@media (width >= var(--x))` is invalid and the browser drops the whole
+ * block — silently. Those two keep literals. See README.md.
+ *
+ * `inline` inlines each variable reference into the utility, which is what lets
+ * the `.dark` block in semantics.css swap values at runtime.
+ */
+
+@theme inline {
+  --*: initial;
+
+  /* ------------------------------------------------------------------ color
+   * Every entry reads a semantic token. There is no default palette, by
+   * design — a color that isn't a named role doesn't exist. */
+
+  /* CSS-wide keywords, not palette entries. `border-transparent` needs these. */
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-inherit: inherit;
+
+  /* Surfaces */
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+
+  /* Actions */
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+
+  /* De-emphasised content */
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Edges */
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+
+  /* Charts */
+  --color-chart-1: var(--chart-1);
+  --color-chart-2: var(--chart-2);
+  --color-chart-3: var(--chart-3);
+  --color-chart-4: var(--chart-4);
+  --color-chart-5: var(--chart-5);
+
+  /* Sidebar */
+  --color-sidebar: var(--sidebar);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+
+  /* ----------------------------------------------------------------- radius
+   * Derived from the single `--radius` knob in semantics.css. */
+  --radius-none: 0;
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+  --radius-full: calc(infinity * 1px);
+
+  /* ---------------------------------------------------------------- spacing
+   * The one unit every p-*, m-*, gap-*, size-* and h-* is a multiple of.
+   * `p-4` is calc(var(--spacing) * 4). */
+  --spacing: var(--spacing-base);
+
+  /* ------------------------------------------------------------------- type
+   * Tailwind's step names on the left, our roles on the right. Re-point a step
+   * at a different role here; change the role's value in semantics.css. */
+  --font-sans: var(--font-family-base);
+  --font-mono: var(--font-family-mono);
+  --font-heading: var(--font-family-heading);
+  --default-font-family: var(--font-family-base);
+  --default-mono-font-family: var(--font-family-mono);
+
+  --text-xs: var(--text-caption);
+  --text-xs--line-height: var(--text-caption-leading);
+  --text-sm: var(--text-body);
+  --text-sm--line-height: var(--text-body-leading);
+  --text-base: var(--text-body-lead);
+  --text-base--line-height: var(--text-body-lead-leading);
+  --text-lg: var(--text-title-sm);
+  --text-lg--line-height: var(--text-title-sm-leading);
+  --text-xl: var(--text-title);
+  --text-xl--line-height: var(--text-title-leading);
+  --text-2xl: var(--text-title-lg);
+  --text-2xl--line-height: var(--text-title-lg-leading);
+  --text-3xl: var(--text-display-sm);
+  --text-3xl--line-height: var(--text-display-sm-leading);
+  --text-4xl: var(--text-display);
+  --text-4xl--line-height: var(--text-display-leading);
+
+  /* Four weights. A variable font offers more; a design system shouldn't. */
+  --font-weight-normal: var(--weight-body);
+  --font-weight-medium: var(--weight-emphasis);
+  --font-weight-semibold: var(--weight-heading);
+  --font-weight-bold: var(--weight-strong);
+
+  --tracking-tight: var(--tracking-headline);
+  --tracking-normal: var(--tracking-body);
+  --tracking-wide: var(--tracking-label);
+  --tracking-widest: var(--tracking-caps);
+
+  --leading-none: var(--leading-flush);
+  --leading-tight: var(--leading-headline);
+  --leading-snug: var(--leading-ui);
+  --leading-normal: var(--leading-prose);
+  --leading-relaxed: var(--leading-airy);
+
+  /* ----------------------------------------------------------------- layout
+   * Breakpoints and containers are the one exception to the layering, because
+   * CSS forbids var() inside a query condition. Keep them literal — indirecting
+   * a breakpoint emits `@media (width >= var(--x))`, which every browser drops,
+   * and a container variant emits nothing at all. */
+  --breakpoint-sm: 40rem;
+  --breakpoint-md: 48rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 80rem;
+  --breakpoint-2xl: 96rem;
+
+  --container-xs: 20rem;
+  --container-sm: 24rem;
+  --container-md: 28rem;
+  --container-lg: 32rem;
+  --container-xl: 36rem;
+  --container-2xl: 42rem;
+  --container-3xl: 48rem;
+  --container-4xl: 56rem;
+  --container-5xl: 64rem;
+
+  --aspect-video: var(--aspect-media);
+
+  /* -------------------------------------------------------------- elevation */
+  --shadow-2xs: var(--elevation-hairline);
+  --shadow-xs: var(--elevation-resting);
+  --shadow-sm: var(--elevation-raised);
+  --shadow-md: var(--elevation-overlay);
+  --shadow-lg: var(--elevation-popover);
+  --shadow-xl: var(--elevation-modal);
+
+  --blur-xs: var(--blur-scrim);
+  --blur-sm: var(--blur-veil);
+  --blur-md: var(--blur-frost);
+  --blur-lg: var(--blur-heavy);
+
+  /* ----------------------------------------------------------------- motion */
+  --default-transition-duration: var(--motion-duration);
+  --default-transition-timing-function: var(--motion-easing);
+  --ease-in: var(--motion-easing-accelerate);
+  --ease-out: var(--motion-easing-decelerate);
+  --ease-in-out: var(--motion-easing-smooth);
+
+  --animate-spin: var(--motion-spinner);
+  --animate-ping: var(--motion-ping);
+  --animate-pulse: var(--motion-skeleton);
+  --animate-bounce: var(--motion-attention);
+  --animate-accordion-down: var(--motion-disclosure-open);
+  --animate-accordion-up: var(--motion-disclosure-close);
+}
+
+/*
+ * Keyframes, deliberately outside `@theme`.
+ *
+ * Tailwind only emits a keyframe it can tie to an `--animate-*` value, by
+ * reading the animation name out of that value. Ours say `var(--motion-…)`,
+ * so it can't, and `--*: initial` has already deleted the ones Tailwind and
+ * tw-animate-css ship. Declared here they are always emitted, which is what
+ * makes `animate-spin`, `animate-pulse` and the accordion actually animate.
+ */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes ping {
+  75%,
+  100% {
+    transform: scale(2);
+    opacity: 0;
+  }
+}
+
+@keyframes pulse {
+  50% {
+    opacity: 0.5;
+  }
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(-25%);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: none;
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+/* Radix publishes the measured panel height on the content element. */
+@keyframes accordion-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-accordion-content-height, auto);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height, auto);
+  }
+  to {
+    height: 0;
+  }
+}

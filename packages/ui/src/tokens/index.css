@@ -1,0 +1,31 @@
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import '@fontsource-variable/geist';
+
+/* Design tokens, in dependency order: primitives hold the raw values, semantics
+ * name the roles, theme decides which become utility classes. Nothing may skip
+ * a layer — see README.md. */
+@import './primitives.css';
+@import './semantics.css';
+@import './theme.css';
+
+/* Tailwind never scans node_modules on its own, and that is how a consuming app
+ * resolves this package. Without this line every class used only inside a
+ * primitive would generate no CSS. The path is relative to this file, so it
+ * lands on the package's own components either way. */
+@source '../components';
+
+@custom-variant dark (&:is(.dark *));
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+  html {
+    @apply font-sans;
+  }
+}

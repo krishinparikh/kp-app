@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Route, Routes } from 'react-router'
 import './index.css'
 import App from './App.tsx'
-import { TooltipProvider } from './components/primitives'
+import { TooltipProvider } from '@kp-app/ui'
 import { pages } from './app/routes.ts'
 
 createRoot(document.getElementById('root')!).render(

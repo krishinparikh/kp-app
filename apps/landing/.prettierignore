@@ -1,0 +1,5 @@
+# Prettier only reads the .prettierignore next to where it runs, so the root
+# one doesn't apply to `pnpm --filter landing format`.
+
+.next
+.turbo

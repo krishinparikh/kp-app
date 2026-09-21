@@ -1,0 +1,186 @@
+/*
+ * Layer 2 — semantic tokens.
+ *
+ * Named for what they are FOR, not what they look like. Every value here is a
+ * single `var(--<primitive>)` and nothing else — no literals, no calc, no
+ * references to other semantic tokens. That is enforced by
+ * `scripts/lint-tokens.ts`.
+ *
+ * The color and radius names are shadcn's. Don't rename those: every component
+ * added with `pnpm ui:add` expects exactly them, and some read them directly
+ * via `var(--secondary)` in a color-mix. The rest are ours.
+ *
+ * Only the colors have a `.dark` block. Type, layout, elevation and motion
+ * don't change with the theme, so they are declared once.
+ *
+ * theme.css is what turns these into utility classes.
+ *
+ * To restyle the app, repoint these at different primitives. To change the
+ * palette itself, edit primitives.css.
+ */
+
+:root {
+  /* Surfaces */
+  --background: var(--neutral-0);
+  --foreground: var(--neutral-950);
+  --card: var(--neutral-0);
+  --card-foreground: var(--neutral-950);
+  --popover: var(--neutral-0);
+  --popover-foreground: var(--neutral-950);
+
+  /* Actions */
+  --primary: var(--neutral-900);
+  --primary-foreground: var(--neutral-50);
+  --secondary: var(--neutral-100);
+  --secondary-foreground: var(--neutral-900);
+  --accent: var(--neutral-100);
+  --accent-foreground: var(--neutral-900);
+  --destructive: var(--red-500);
+
+  /* De-emphasised content */
+  --muted: var(--neutral-100);
+  --muted-foreground: var(--neutral-500);
+
+  /* Edges */
+  --border: var(--neutral-200);
+  --input: var(--neutral-200);
+  --ring: var(--neutral-400);
+
+  /* Charts */
+  --chart-1: var(--neutral-300);
+  --chart-2: var(--neutral-500);
+  --chart-3: var(--neutral-600);
+  --chart-4: var(--neutral-700);
+  --chart-5: var(--neutral-800);
+
+  /* Sidebar */
+  --sidebar: var(--neutral-50);
+  --sidebar-foreground: var(--neutral-950);
+  --sidebar-primary: var(--neutral-900);
+  --sidebar-primary-foreground: var(--neutral-50);
+  --sidebar-accent: var(--neutral-100);
+  --sidebar-accent-foreground: var(--neutral-900);
+  --sidebar-border: var(--neutral-200);
+  --sidebar-ring: var(--neutral-400);
+
+  /* Shape */
+  --radius: var(--radius-base);
+
+  /* ------------------------------------------------------------------- type
+   * Roles, not sizes. theme.css maps Tailwind's step names onto these, so
+   * `text-sm` renders whatever `--text-body` points at. Each size role has a
+   * matching `-leading` role holding its line height. */
+  --font-family-base: var(--font-geist);
+  --font-family-heading: var(--font-geist);
+  --font-family-mono: var(--font-system-mono);
+
+  --text-caption: var(--font-size-1);
+  --text-caption-leading: var(--font-leading-1);
+  --text-body: var(--font-size-2);
+  --text-body-leading: var(--font-leading-2);
+  --text-body-lead: var(--font-size-3);
+  --text-body-lead-leading: var(--font-leading-3);
+  --text-title-sm: var(--font-size-4);
+  --text-title-sm-leading: var(--font-leading-4);
+  --text-title: var(--font-size-5);
+  --text-title-leading: var(--font-leading-5);
+  --text-title-lg: var(--font-size-6);
+  --text-title-lg-leading: var(--font-leading-6);
+  --text-display-sm: var(--font-size-7);
+  --text-display-sm-leading: var(--font-leading-7);
+  --text-display: var(--font-size-8);
+  --text-display-leading: var(--font-leading-8);
+
+  --weight-body: var(--font-weight-400);
+  --weight-emphasis: var(--font-weight-500);
+  --weight-heading: var(--font-weight-600);
+  --weight-strong: var(--font-weight-700);
+
+  --tracking-headline: var(--letter-spacing-tight);
+  --tracking-body: var(--letter-spacing-none);
+  --tracking-label: var(--letter-spacing-wide);
+  --tracking-caps: var(--letter-spacing-wider);
+
+  --leading-flush: var(--line-height-100);
+  --leading-headline: var(--line-height-125);
+  --leading-ui: var(--line-height-138);
+  --leading-prose: var(--line-height-150);
+  --leading-airy: var(--line-height-163);
+
+  /* ----------------------------------------------------------------- layout */
+  --spacing-base: var(--space-unit);
+  --aspect-media: var(--ratio-16-9);
+
+  /* -------------------------------------------------------------- elevation
+   * Named for how far off the page a surface sits, not how dark the shadow is. */
+  --elevation-hairline: var(--box-shadow-1);
+  --elevation-resting: var(--box-shadow-2);
+  --elevation-raised: var(--box-shadow-3);
+  --elevation-overlay: var(--box-shadow-4);
+  --elevation-popover: var(--box-shadow-5);
+  --elevation-modal: var(--box-shadow-6);
+
+  --blur-scrim: var(--blur-radius-4);
+  --blur-veil: var(--blur-radius-8);
+  --blur-frost: var(--blur-radius-12);
+  --blur-heavy: var(--blur-radius-16);
+
+  /* ----------------------------------------------------------------- motion */
+  --motion-duration: var(--duration-150);
+  --motion-easing: var(--easing-standard);
+  --motion-easing-accelerate: var(--easing-in);
+  --motion-easing-decelerate: var(--easing-out);
+  --motion-easing-smooth: var(--easing-standard);
+
+  --motion-spinner: var(--animation-spin);
+  --motion-ping: var(--animation-ping);
+  --motion-skeleton: var(--animation-pulse);
+  --motion-attention: var(--animation-bounce);
+  --motion-disclosure-open: var(--animation-accordion-down);
+  --motion-disclosure-close: var(--animation-accordion-up);
+}
+
+.dark {
+  /* Surfaces */
+  --background: var(--neutral-950);
+  --foreground: var(--neutral-50);
+  --card: var(--neutral-900);
+  --card-foreground: var(--neutral-50);
+  --popover: var(--neutral-900);
+  --popover-foreground: var(--neutral-50);
+
+  /* Actions */
+  --primary: var(--neutral-200);
+  --primary-foreground: var(--neutral-900);
+  --secondary: var(--neutral-800);
+  --secondary-foreground: var(--neutral-50);
+  --accent: var(--neutral-800);
+  --accent-foreground: var(--neutral-50);
+  --destructive: var(--red-400);
+
+  /* De-emphasised content */
+  --muted: var(--neutral-800);
+  --muted-foreground: var(--neutral-400);
+
+  /* Edges. Translucent, so they read against whatever surface is behind. */
+  --border: var(--neutral-0-alpha-10);
+  --input: var(--neutral-0-alpha-15);
+  --ring: var(--neutral-500);
+
+  /* Charts */
+  --chart-1: var(--neutral-300);
+  --chart-2: var(--neutral-500);
+  --chart-3: var(--neutral-600);
+  --chart-4: var(--neutral-700);
+  --chart-5: var(--neutral-800);
+
+  /* Sidebar */
+  --sidebar: var(--neutral-900);
+  --sidebar-foreground: var(--neutral-50);
+  --sidebar-primary: var(--blue-500);
+  --sidebar-primary-foreground: var(--neutral-50);
+  --sidebar-accent: var(--neutral-800);
+  --sidebar-accent-foreground: var(--neutral-50);
+  --sidebar-border: var(--neutral-0-alpha-10);
+  --sidebar-ring: var(--neutral-500);
+}

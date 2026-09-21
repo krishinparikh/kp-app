@@ -1,25 +1,4 @@
-@import 'tailwindcss';
-@import 'tw-animate-css';
-@import 'shadcn/tailwind.css';
-@import '@fontsource-variable/geist';
-
-/* Design tokens, in dependency order: primitives hold the raw values, semantics
- * name the roles, theme decides which become utility classes. Nothing may skip
- * a layer — see src/styles/README.md. */
-@import './styles/primitives.css';
-@import './styles/semantics.css';
-@import './styles/theme.css';
-
-@custom-variant dark (&:is(.dark *));
-
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
-  html {
-    @apply font-sans;
-  }
-}
+/* Tailwind, the design tokens, and the base layer all come from the shared UI
+ * package — the same stylesheet every app imports. Add app-only CSS below;
+ * anything a second app would want belongs in @kp-app/ui instead. */
+@import '@kp-app/ui/styles.css';

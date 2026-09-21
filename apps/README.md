@@ -7,13 +7,17 @@ instead.
 ```sh
 apps/
 ├── server/     # NestJS API
-├── web/        # React web app
-├── landing/    # Landing page
+├── web/        # React web app (Vite)
+├── landing/    # Landing page (Next.js)
 ├── mcp-app/    # MCP app
 └── mobile/     # Mobile app
 ```
 
-Only `server/` and `web/` exist so far; the rest are empty placeholders.
+`mcp-app/` and `mobile/` are still empty placeholders.
+
+Everything that renders a page imports [`@kp-app/ui`](../packages/ui/README.md)
+for its design tokens and components — `web` through the Tailwind Vite plugin,
+`landing` through PostCSS. Neither declares a color of its own.
 
 Run one on its own with `pnpm --filter <name> dev`, or the whole stack with
 `make up` from the repo root.

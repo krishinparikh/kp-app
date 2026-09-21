@@ -1,7 +1,8 @@
 # web
 
-React 19 + TypeScript + Vite 8, with Tailwind v4, React Router 8, shadcn/ui
-components, Storybook, and Vitest.
+React 19 + TypeScript + Vite 8, with Tailwind v4, React Router 8, and Vitest.
+The design tokens and UI components come from
+[`@kp-app/ui`](../../packages/ui/README.md), which also owns Storybook.
 
 Normally you'd run this via Docker from the repo root (`make up`). To run it on
 its own, install from the **repo root** — this is a pnpm workspace package, so
@@ -12,20 +13,20 @@ pnpm install          # from the repo root
 pnpm --filter web dev
 ```
 
-| Script                 | What it does                            |
-| ---------------------- | --------------------------------------- |
-| `pnpm dev`             | Dev server on http://localhost:5173     |
-| `pnpm build`           | Type-check and build to `dist/`         |
-| `pnpm typecheck`       | Type-check without emitting             |
-| `pnpm preview`         | Serve the production build              |
-| `pnpm lint`            | Oxlint                                  |
-| `pnpm test`            | Vitest, once                            |
-| `pnpm test:watch`      | Vitest, watching                        |
-| `pnpm storybook`       | Storybook on http://localhost:6006      |
-| `pnpm build-storybook` | Static Storybook to `storybook-static/` |
-| `pnpm ui:add <name>`   | Add a shadcn component (see below)      |
-| `pnpm format`          | Prettier, writing in place              |
-| `pnpm format:check`    | Prettier, check only                    |
+| Script              | What it does                        |
+| ------------------- | ----------------------------------- |
+| `pnpm dev`          | Dev server on http://localhost:5173 |
+| `pnpm build`        | Type-check and build to `dist/`     |
+| `pnpm typecheck`    | Type-check without emitting         |
+| `pnpm preview`      | Serve the production build          |
+| `pnpm lint`         | Oxlint, then the token linter       |
+| `pnpm test`         | Vitest, once                        |
+| `pnpm test:watch`   | Vitest, watching                    |
+| `pnpm format`       | Prettier, writing in place          |
+| `pnpm format:check` | Prettier, check only                |
+
+Storybook and `ui:add` live with the components:
+`pnpm --filter @kp-app/ui storybook`.
 
 ## Layout
 
@@ -33,26 +34,16 @@ pnpm --filter web dev
 src/
 ├── main.tsx        # router setup
 ├── App.tsx         # layout shell, renders routes via <Outlet />
-├── index.css       # Tailwind entry, imports the token layers
+├── index.css       # one line: @import '@kp-app/ui/styles.css'
 ├── app/
 │   ├── routes.ts   # the page list main.tsx maps over
 │   ├── home/Page.tsx
 │   └── about/Page.tsx
-├── styles/         # design tokens
-│   ├── primitives.css  # raw values
-│   ├── semantics.css   # roles pointing at primitives
-│   └── theme.css       # which tokens become utility classes
 ├── components/
-│   └── primitives/   # shadcn/ui — one folder per component
-│       └── Button/
-│           ├── Button.tsx
-│           ├── Button.stories.tsx
-│           ├── Button.test.tsx
-│           └── index.ts
+│   └── common/     # app-only pieces; shared ones go in @kp-app/ui
 └── lib/
-    ├── api.ts        # axios client + contract parsing
-    ├── site.ts
-    └── utils.ts
+    ├── api.ts      # axios client + contract parsing
+    └── site.ts
 ```
 
 ## Notes
@@ -60,23 +51,27 @@ src/
 - Environment variables come from the **repo root** `.env`, not this directory —
   `vite.config.ts` sets `envDir: '../../'`. Only `VITE_`-prefixed vars reach the
   browser bundle.
-- Tailwind v4 needs no config file. The `@tailwindcss/vite` plugin plus the
-  imports at the top of `src/index.css` are the whole setup.
-- Colors and radii go through two token layers in `src/styles/`: primitives
-  (raw values) feed semantics (roles), and `theme.css` decides which become
-  utility classes.
+- Tailwind v4 needs no config file. The `@tailwindcss/vite` plugin plus the one
+  `@import` in `src/index.css` are the whole setup — that stylesheet pulls in
+  Tailwind, the fonts, and the token layers from `@kp-app/ui`.
+- Colors and radii go through two token layers in that package: primitives (raw
+  values) feed semantics (roles), and `theme.css` decides which become utility
+  classes.
 - `theme.css` starts with `--*: initial`, which deletes every Tailwind default.
   A component can only use what that file declares — `bg-red-500`, `text-9xl`
-  and `font-thin` generate no CSS. `pnpm lint` names any that slip in. See
-  `src/styles/README.md`.
+  and `font-thin` generate no CSS. `pnpm lint` runs the package's `lint-tokens`
+  binary over `src/`, which names any that slip in. See
+  `packages/ui/src/tokens/README.md`.
 - `@/` resolves to `src/`, declared in both `tsconfig.app.json` and
-  `vite.config.ts`. shadcn components depend on it; keep the two in sync.
-- UI components live in `src/components/primitives/`, one folder per component
-  with its stories and tests beside it. Add one with `pnpm ui:add <name>` —
-  see `src/components/primitives/README.md`.
+  `vite.config.ts`. Keep the two in sync, and note it points here, not into
+  `@kp-app/ui` — which is why nothing in that package uses the alias.
+- Shared UI comes from `@kp-app/ui`: `import { Button } from '@kp-app/ui'`.
+  App-only components go in `src/components/common/`. See
+  `packages/ui/README.md`.
 - Tests are Vitest + Testing Library against jsdom, configured in
-  `vitest.config.ts`. Storybook is separate and purely visual: stories are for
-  looking at, `.test.tsx` files are for asserting.
+  `vitest.config.ts`; `vitest.setup.ts` re-exports the DOM stubs from
+  `@kp-app/ui`. Component tests and stories live with the components, in the
+  package.
 - Pages live in `src/app/<name>/Page.tsx` and are listed in `src/app/routes.ts`,
   which `main.tsx` maps into `<Route>` elements.
 - Every API call goes through `api.get` / `api.post` / … in `src/lib/api.ts`.

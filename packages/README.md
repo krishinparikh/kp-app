@@ -6,13 +6,15 @@ deployed on its own.
 ```sh
 packages/
 ├── contract/   # the API contract — Zod schemas, types, route constants
-└── ui/         # React component library
+└── ui/         # design tokens, the stylesheet, and the React components
 ```
 
-`contract/` is imported by both apps and is the single definition of every
-request and response shape. See [contract/README.md](contract/README.md).
+`contract/` is imported by `web` and `server` and is the single definition of
+every request and response shape. See [contract/README.md](contract/README.md).
 
-`ui/` is an empty placeholder — nothing has been extracted into it yet.
+`ui/` is imported by every app that renders a page. It owns the design tokens,
+the stylesheet built on them, the shadcn primitives, and Storybook. See
+[ui/README.md](ui/README.md).
 
 ## Adding a package
 
@@ -28,4 +30,6 @@ unavailable there. Copy that pair into any package both apps import.
 
 A package the server imports must also emit JavaScript. `apps/server` runs
 `node dist/main` with no TypeScript loader, and `nest build` compiles only
-`apps/server/src`, so raw `.ts` from a workspace package can't reach it.
+`apps/server/src`, so raw `.ts` from a workspace package can't reach it. That is
+why `contract/` builds to `dist/` and `ui/` doesn't: only browser bundlers ever
+read `ui/`, and they compile its source themselves.
