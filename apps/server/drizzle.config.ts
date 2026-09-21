@@ -16,8 +16,7 @@ export default defineConfig({
   dialect: 'postgresql',
   dbCredentials: {
     url: normalizeDatabaseUrl(
-      process.env.DATABASE_URL ??
-        'postgresql://kp:kp@localhost:5432/kp',
+      process.env.DATABASE_URL ?? 'postgresql://kp:kp@localhost:5432/kp',
     ),
   },
 })

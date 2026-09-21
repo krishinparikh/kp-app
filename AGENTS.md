@@ -19,6 +19,14 @@ Look at docs/ for more info on this project
 - `pnpm --filter web lint` runs `scripts/lint-tokens.ts`, which fails the build on any layering violation.
 - Details in `apps/web/src/styles/README.md`.
 
+## API Contract (packages/contract)
+- Every request and response shape is a Zod schema in `packages/contract`, imported by both apps. Never redeclare a shape locally, and never add a server-only DTO — a second copy is the drift this package exists to prevent.
+- Schemas describe the JSON on the wire, not in-memory types: a timestamp is `z.string()`, never `z.date()`. Convert after parsing.
+- Server: validate with `@Body({ schema })`. The parameter's TypeScript annotation must be that schema's `z.infer` — NestJS does not cross-check them.
+- Web: all calls go through `apiRequest` in `apps/web/src/lib/api.ts`, which parses the response against the schema. Never call `fetch` directly.
+- The package compiles to `dist/`, so run `pnpm --filter @kp-app/contract build` after editing a schema outside the dev watcher.
+- Details in `packages/contract/README.md`.
+
 ## Agentic Development
 - Three main sources of documentation: AGENTS.md (CLAUDE.md is a symlink to it), docs/ files, and folder-specific README.md files. After making any changes, make sure the right documentation is subsequently changed too.
 - 

@@ -5,8 +5,9 @@ An opinionated bootstrap for agent-first, full-stack apps. Inspired by these gui
 - **Harness-agnostic** — Claude Code, Codex, Cursor, or none of the above.
   Shared instructions live in `AGENTS.md`, so no single tool owns the project.
 - **Type-safe end to end** — one set of types spans the database, API, and UI.
-  Agents write better code against a contract that's checked rather than
-  inferred, and that payoff grows with the codebase.
+  The API contract is a package both apps import, checked at runtime on both
+  sides. Agents write better code against a contract that's enforced rather
+  than inferred, and that payoff grows with the codebase.
 - **Opinionated framework** — NestJS gives every piece of code one obvious
   place to live. Modules, controllers, and services keep agents on the MVC
   rails instead of inventing a new structure per feature, so the codebase stays
@@ -51,8 +52,6 @@ Once it's up:
 
 - Web app — http://localhost:5173
 - API — http://localhost:8000
-- Interactive API docs — http://localhost:8000/docs
-- OpenAPI schema — http://localhost:8000/openapi.json
 - Health check — http://localhost:8000/health
 
 Source directories are bind-mounted, so edits on your machine hot-reload inside
@@ -151,19 +150,39 @@ tables.
 database. `db:push` skips migration files and syncs the schema directly, which
 is convenient while prototyping and a bad idea anywhere else.
 
-## Sharing types with the web app
+## The API contract
 
-The server publishes an OpenAPI schema at `/openapi.json`, generated from its
-controllers and DTOs. The web app turns that into a typed client:
+`packages/contract` holds the request and response shapes as Zod schemas, with
+the TypeScript types inferred from them. Both apps import it, so there is one
+definition per endpoint and no generation step — edit a schema and both sides
+move together.
 
-```bash
-make up                     # server needs to be running
-pnpm --filter web gen:api   # rewrites apps/web/src/lib/api-types.ts
+```ts
+// packages/contract/src/health.ts
+export const healthPath = '/health'
+export const healthResponse = z.object({ status: z.enum(healthStatuses) })
+export type HealthResponse = z.infer<typeof healthResponse>
 ```
 
-After that, `api.GET('/health')` in `apps/web/src/lib/api.ts` is fully typed and
-a server change surfaces in the web app as a type error. Re-run `gen:api`
-whenever you change a route or DTO.
+Both ends enforce it at runtime, not just at compile time:
+
+- **Server** — `@Body({ schema })` plus the global `StandardSchemaValidationPipe`
+  in `app.module.ts` validates incoming requests. Zod 4 implements Standard
+  Schema, so its schemas plug into NestJS directly.
+- **Web** — `apiRequest` in `apps/web/src/lib/api.ts` parses every response
+  against the schema, so a server that has drifted from the contract fails at
+  the boundary instead of leaking a wrong shape into the UI.
+
+The schemas describe the JSON on the wire, not in-memory types: a timestamp is
+`z.string()`, never `z.date()`. See
+[packages/contract/README.md](packages/contract/README.md).
+
+The package compiles to `dist/`, because the server runs `node dist/main` with
+no TypeScript loader. `pnpm dev` and `make up` both run a `tsc --watch` for it,
+so day to day you just edit a schema. One wrinkle: `nest start --watch` only
+watches `apps/server/src`, so a **contract-only** edit needs
+`docker compose restart server` to reach the API. Editing a contract and the
+controller that uses it — the normal case — restarts on its own.
 
 ## Documentation
 
@@ -212,7 +231,7 @@ kp-app/
 ├── apps/
 │   ├── server/
 │   │   ├── src/
-│   │   │   ├── main.ts     # bootstrap, CORS, Swagger, listen
+│   │   │   ├── main.ts     # bootstrap, CORS, listen
 │   │   │   ├── app.module.ts
 │   │   │   ├── config/     # Zod-validated environment
 │   │   │   ├── db/         # Drizzle client + schema
@@ -224,11 +243,12 @@ kp-app/
 │   │       ├── main.tsx    # router setup
 │   │       ├── App.tsx     # layout shell
 │   │       ├── app/        # pages + route list
-│   │       └── lib/        # typed API client
+│   │       └── lib/        # API client, parses against the contract
 │   ├── landing/            # empty placeholder
 │   ├── mcp-app/            # empty placeholder
 │   └── mobile/             # empty placeholder
 └── packages/
+    ├── contract/           # Zod schemas shared by server and web
     └── ui/                 # empty placeholder
 ```
 

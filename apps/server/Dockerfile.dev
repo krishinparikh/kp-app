@@ -11,7 +11,14 @@ WORKDIR /repo
 COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 COPY apps/server/package.json apps/server/
 COPY apps/web/package.json apps/web/
+COPY packages/contract/package.json packages/contract/
 RUN pnpm install --frozen-lockfile --filter server...
+
+# The contract has to be compiled before the server can import it: the server
+# runs plain node on its own dist and has no TypeScript loader. .dockerignore
+# excludes **/dist, so it's built here rather than copied in.
+COPY packages/contract packages/contract
+RUN pnpm --filter @kp-app/contract build
 
 COPY apps/server apps/server
 
@@ -19,4 +26,6 @@ WORKDIR /repo/apps/server
 
 EXPOSE 8000
 
-CMD ["pnpm", "dev"]
+# Recompile the bind-mounted contract source, leave a tsc watch running behind
+# it, then hand PID 1 to nest.
+CMD ["sh", "-c", "pnpm --filter @kp-app/contract build && (pnpm --filter @kp-app/contract dev &) && exec pnpm dev"]

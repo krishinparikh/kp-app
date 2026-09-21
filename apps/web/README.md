@@ -24,7 +24,6 @@ pnpm --filter web dev
 | `pnpm storybook`       | Storybook on http://localhost:6006      |
 | `pnpm build-storybook` | Static Storybook to `storybook-static/` |
 | `pnpm ui:add <name>`   | Add a shadcn component (see below)      |
-| `pnpm gen:api`         | Regenerate `src/lib/api-types.ts`       |
 | `pnpm format`          | Prettier, writing in place              |
 | `pnpm format:check`    | Prettier, check only                    |
 
@@ -51,8 +50,7 @@ src/
 │           ├── Button.test.tsx
 │           └── index.ts
 └── lib/
-    ├── api.ts        # typed client
-    ├── api-types.ts  # GENERATED from the server's OpenAPI schema
+    ├── api.ts        # fetch + parse against @kp-app/contract
     ├── site.ts
     └── utils.ts
 ```
@@ -81,8 +79,10 @@ src/
   looking at, `.test.tsx` files are for asserting.
 - Pages live in `src/app/<name>/Page.tsx` and are listed in `src/app/routes.ts`,
   which `main.tsx` maps into `<Route>` elements.
-- `src/lib/api-types.ts` is generated — don't edit it. Run `pnpm gen:api` with
-  the server up (`make up`) after changing a server route or DTO.
+- Every API call goes through `apiRequest` in `src/lib/api.ts`, which parses the
+  response against a schema from `@kp-app/contract`. Never call `fetch`
+  directly, and never redeclare a response shape here — the contract package is
+  the one definition, shared with the server.
 - Under Docker, file watching falls back to polling (`VITE_IN_DOCKER=1`), because
   macOS bind mounts don't forward filesystem events.
 - Prettier and its ignore file live at the repo root, shared with `server`.

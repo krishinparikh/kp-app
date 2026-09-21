@@ -1,12 +1,9 @@
 import { Controller, Get } from '@nestjs/common'
-import { ApiOkResponse } from '@nestjs/swagger'
+import { healthPath, type HealthResponse } from '@kp-app/contract'
 
-import { HealthResponse } from './health.dto.js'
-
-@Controller('health')
+@Controller(healthPath)
 export class HealthController {
   @Get()
-  @ApiOkResponse({ type: HealthResponse })
   health(): HealthResponse {
     return { status: 'ok' }
   }

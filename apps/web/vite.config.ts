@@ -15,6 +15,8 @@ export default defineConfig({
   envDir: '../../',
   server: {
     port: 5173,
+    // Listen on every interface so the port mapping reaches us in compose.
+    host: process.env.VITE_IN_DOCKER ? true : undefined,
     // Bind-mounted source on macOS doesn't forward fs events into the
     // container, so fall back to polling when running under compose.
     watch: process.env.VITE_IN_DOCKER ? { usePolling: true } : undefined,

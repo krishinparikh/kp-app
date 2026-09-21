@@ -15,7 +15,7 @@ export default mergeConfig(
       css: true,
       coverage: {
         provider: 'v8',
-        include: ['src/components/**/*.tsx'],
+        include: ['src/components/**/*.tsx', 'src/lib/**/*.ts'],
         exclude: ['**/*.stories.tsx'],
       },
     },
