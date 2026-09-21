@@ -30,9 +30,9 @@ string. An interface saying `createdAt: Date` type-checks and then crashes.
   directly with no adapter. (It's a module provider rather than
   `useGlobalPipes` so tests, which build the app without running `main.ts`,
   get it too.)
-- **Web** — `apiRequest` in `apps/web/src/lib/api.ts` parses every response
+- **Web** — the `api` helpers in `apps/web/src/lib/api.ts` parse every response
   against the schema. That parse is what catches the server drifting from the
-  contract, which is the tradeoff of hand-writing it instead of generating it.
+  contract, which is the tradeoff of hand-writing it.
 
 ## Adding a resource
 

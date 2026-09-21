@@ -50,7 +50,7 @@ src/
 │           ├── Button.test.tsx
 │           └── index.ts
 └── lib/
-    ├── api.ts        # fetch + parse against @kp-app/contract
+    ├── api.ts        # axios client + contract parsing
     ├── site.ts
     └── utils.ts
 ```
@@ -79,10 +79,10 @@ src/
   looking at, `.test.tsx` files are for asserting.
 - Pages live in `src/app/<name>/Page.tsx` and are listed in `src/app/routes.ts`,
   which `main.tsx` maps into `<Route>` elements.
-- Every API call goes through `apiRequest` in `src/lib/api.ts`, which parses the
-  response against a schema from `@kp-app/contract`. Never call `fetch`
-  directly, and never redeclare a response shape here — the contract package is
-  the one definition, shared with the server.
+- Every API call goes through `api.get` / `api.post` / … in `src/lib/api.ts`.
+  The schema from `@kp-app/contract` is always the second argument and drives
+  the return type, so a drifted server throws at the boundary. Never reach for
+  `axios` or `fetch` directly, and never redeclare a response shape here.
 - Under Docker, file watching falls back to polling (`VITE_IN_DOCKER=1`), because
   macOS bind mounts don't forward filesystem events.
 - Prettier and its ignore file live at the repo root, shared with `server`.

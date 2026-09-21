@@ -1,65 +1,53 @@
 import { healthPath, healthResponse } from '@kp-app/contract'
-import { afterEach, describe, expect, it, vi } from 'vitest'
-import { ApiError, apiRequest } from './api.ts'
+import MockAdapter from 'axios-mock-adapter'
+import { afterEach, beforeEach, describe, expect, it } from 'vitest'
+import { z } from 'zod'
+import { api, apiClient } from './api.ts'
 
-const responds = (body: string, init: ResponseInit) =>
-  vi.fn().mockResolvedValue(new Response(body, init))
+let mock: MockAdapter
 
-afterEach(() => vi.unstubAllGlobals())
+beforeEach(() => {
+  mock = new MockAdapter(apiClient)
+})
+afterEach(() => mock.restore())
 
-describe('apiRequest', () => {
-  it('parses a 200 body against the schema', async () => {
-    vi.stubGlobal('fetch', responds('{"status":"ok"}', { status: 200 }))
+describe('api.get', () => {
+  it('returns the parsed body', async () => {
+    mock.onGet(healthPath).reply(200, { status: 'ok' })
 
-    await expect(apiRequest(healthPath, healthResponse)).resolves.toEqual({
+    await expect(api.get(healthPath, healthResponse)).resolves.toEqual({
       status: 'ok',
     })
   })
 
   // The test that justifies parsing rather than casting: without it, nothing
   // proves a drifted server is caught at the boundary.
-  it('throws when a 200 body does not match the schema', async () => {
-    vi.stubGlobal('fetch', responds('{"status":"weird"}', { status: 200 }))
+  it('throws when the body does not match the schema', async () => {
+    mock.onGet(healthPath).reply(200, { status: 'weird' })
 
-    await expect(apiRequest(healthPath, healthResponse)).rejects.toThrow()
-  })
-
-  it('throws ApiError with the flattened message on a 400', async () => {
-    vi.stubGlobal(
-      'fetch',
-      responds('{"statusCode":400,"message":["a","b"],"error":"Bad Request"}', {
-        status: 400,
-      }),
+    await expect(api.get(healthPath, healthResponse)).rejects.toThrow(
+      z.ZodError,
     )
-
-    await expect(apiRequest(healthPath, healthResponse)).rejects.toMatchObject({
-      status: 400,
-      message: 'a; b',
-    })
   })
 
-  it('falls back to statusText when the error body is not JSON', async () => {
-    vi.stubGlobal('fetch', responds('<html>502</html>', { status: 502 }))
+  it('throws on a non-2xx, carrying the server error', async () => {
+    mock.onGet(healthPath).reply(400, { statusCode: 400, message: 'nope' })
 
-    const error = await apiRequest(healthPath, healthResponse).catch((e) => e)
+    const error = await api.get(healthPath, healthResponse).catch((e) => e)
 
-    expect(error).toBeInstanceOf(ApiError)
-    expect(error.body).toBeUndefined()
+    expect(error.response.status).toBe(400)
+    expect(error.response.data.message).toBe('nope')
   })
+})
 
-  it('sends a JSON body and content type for a POST', async () => {
-    const fetchMock = responds('{"status":"ok"}', { status: 200 })
-    vi.stubGlobal('fetch', fetchMock)
+describe('api.post', () => {
+  it('sends the body and returns the parsed response', async () => {
+    mock.onPost(healthPath).reply(200, { status: 'ok' })
 
-    await apiRequest(healthPath, healthResponse, {
-      method: 'POST',
-      body: { amountCents: 1 },
-    })
+    await expect(
+      api.post(healthPath, healthResponse, { amountCents: 1 }),
+    ).resolves.toEqual({ status: 'ok' })
 
-    expect(fetchMock.mock.calls[0][1]).toMatchObject({
-      method: 'POST',
-      body: '{"amountCents":1}',
-      headers: { 'Content-Type': 'application/json' },
-    })
+    expect(mock.history.post[0].data).toBe('{"amountCents":1}')
   })
 })

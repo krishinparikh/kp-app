@@ -1,81 +1,50 @@
+import axios, { type AxiosResponse } from 'axios'
 import type { z } from 'zod'
-import { apiErrorBody, apiErrorMessage } from '@kp-app/contract'
-import type { ApiErrorBody } from '@kp-app/contract'
-
-const baseUrl = import.meta.env.VITE_API_URL ?? ''
 
 /**
- * A non-2xx response. `body` is the server's error payload when it sent one
- * the contract recognises, and undefined when it didn't — a proxy's HTML 502
- * page, say.
+ * Single axios instance. Requests are cross-origin — the web app runs on 5173
+ * and the API on 8000 — so `baseURL` points at VITE_API_URL and
+ * `withCredentials` sends the auth cookie, which the server allows via
+ * enableCors({ credentials: true }).
  */
-export class ApiError extends Error {
-  // Declared then assigned: erasableSyntaxOnly bans parameter properties.
-  status: number
-  body: ApiErrorBody | undefined
-
-  constructor(status: number, message: string, body?: ApiErrorBody) {
-    super(message)
-    this.name = 'ApiError'
-    this.status = status
-    this.body = body
-  }
-}
-
-export type RequestOptions = {
-  method?: string
-  /** Serialised as JSON. */
-  body?: unknown
-  signal?: AbortSignal
-}
+export const apiClient = axios.create({
+  baseURL: import.meta.env.VITE_API_URL ?? '',
+  withCredentials: true,
+  timeout: 30_000,
+})
 
 /**
- * Calls the API and parses the response against a contract schema.
+ * Fetch and validate in one step, so every network boundary is type-safe. The
+ * contract is hand-written, so the parse is what turns a drifted server into
+ * an error here rather than a confusing failure downstream.
  *
- *   const health = await apiRequest(healthPath, healthResponse)
+ *   const health = await api.get(healthPath, healthResponse)
  *
- * The parse is the point. The contract is hand-written, so this is what turns
- * a server that has drifted from it into an error at the boundary rather than
- * a confusing failure somewhere downstream.
+ * The schema is always the second argument, and drives the return type — call
+ * sites never write a type argument. Pair with React Query when you get there:
+ * the hook owns caching, this owns parsing.
  */
-export async function apiRequest<S extends z.ZodType>(
-  path: string,
-  schema: S,
-  options: RequestOptions = {},
-): Promise<z.output<S>> {
-  const { method = 'GET', body, signal } = options
-  const hasBody = body !== undefined
+export const api = {
+  get: <T extends z.ZodType>(url: string, schema: T) =>
+    parsed(apiClient.get(url), schema),
 
-  const response = await fetch(`${baseUrl}${path}`, {
-    method,
-    signal,
-    // Matches the server's enableCors({ credentials: true }).
-    credentials: 'include',
-    headers: hasBody ? { 'Content-Type': 'application/json' } : undefined,
-    body: hasBody ? JSON.stringify(body) : undefined,
-  })
+  post: <T extends z.ZodType>(url: string, schema: T, body?: unknown) =>
+    parsed(apiClient.post(url, body), schema),
 
-  const payload = await readJson(response)
+  put: <T extends z.ZodType>(url: string, schema: T, body?: unknown) =>
+    parsed(apiClient.put(url, body), schema),
 
-  if (!response.ok) {
-    const parsed = apiErrorBody.safeParse(payload)
-    throw new ApiError(
-      response.status,
-      parsed.success ? apiErrorMessage(parsed.data) : response.statusText,
-      parsed.data,
-    )
-  }
+  patch: <T extends z.ZodType>(url: string, schema: T, body?: unknown) =>
+    parsed(apiClient.patch(url, body), schema),
 
-  return schema.parse(payload)
+  delete: <T extends z.ZodType>(url: string, schema: T) =>
+    parsed(apiClient.delete(url), schema),
 }
 
-/** undefined rather than a throw for an empty or non-JSON body. */
-async function readJson(response: Response): Promise<unknown> {
-  const text = await response.text()
-  if (!text) return undefined
-  try {
-    return JSON.parse(text)
-  } catch {
-    return undefined
-  }
+async function parsed<T extends z.ZodType>(
+  pending: Promise<AxiosResponse>,
+  schema: T,
+): Promise<z.infer<T>> {
+  const { data } = await pending
+  return schema.parse(data)
 }

@@ -169,7 +169,7 @@ Both ends enforce it at runtime, not just at compile time:
 - **Server** — `@Body({ schema })` plus the global `StandardSchemaValidationPipe`
   in `app.module.ts` validates incoming requests. Zod 4 implements Standard
   Schema, so its schemas plug into NestJS directly.
-- **Web** — `apiRequest` in `apps/web/src/lib/api.ts` parses every response
+- **Web** — the `api` helpers in `apps/web/src/lib/api.ts` parse every response
   against the schema, so a server that has drifted from the contract fails at
   the boundary instead of leaking a wrong shape into the UI.
 

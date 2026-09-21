@@ -23,7 +23,7 @@ Look at docs/ for more info on this project
 - Every request and response shape is a Zod schema in `packages/contract`, imported by both apps. Never redeclare a shape locally, and never add a server-only DTO — a second copy is the drift this package exists to prevent.
 - Schemas describe the JSON on the wire, not in-memory types: a timestamp is `z.string()`, never `z.date()`. Convert after parsing.
 - Server: validate with `@Body({ schema })`. The parameter's TypeScript annotation must be that schema's `z.infer` — NestJS does not cross-check them.
-- Web: all calls go through `apiRequest` in `apps/web/src/lib/api.ts`, which parses the response against the schema. Never call `fetch` directly.
+- Web: all calls go through `api.get` / `api.post` / … in `apps/web/src/lib/api.ts`. The schema is always the second argument and drives the return type, so a drifted server throws at the boundary. Never call `axios` or `fetch` directly.
 - The package compiles to `dist/`, so run `pnpm --filter @kp-app/contract build` after editing a schema outside the dev watcher.
 - Details in `packages/contract/README.md`.
 
