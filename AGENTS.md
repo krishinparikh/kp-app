@@ -1,47 +1,52 @@
 # KP App
 
-Look at docs/ for more info on this project
+A pnpm + Turborepo monorepo: a NestJS API, a React web app, a Next.js landing
+page, and two shared packages. This file is an index — read the doc that covers
+what you're about to change before you change it.
 
-## Code Standards
-- Naming: use PascalCase for all .tsx files, kebab-case for all .ts files, and snake_case for all .py files
-- Comments: keep them concise
+## Mandatory Rules
 
-## UI Components (packages/ui)
-- Every app that renders a page imports `@kp-app/ui` — `web` (Vite) and `landing` (Next.js) both do. It owns the design tokens, the stylesheet, the shadcn primitives, and Storybook. An app holds only its own screens and app-specific components.
-- Consume it with two lines: `@import '@kp-app/ui/styles.css'` in the app's CSS entry, and `import { Button } from '@kp-app/ui'` in the components. Never copy a primitive into an app.
-- shadcn/ui components live in `packages/ui/src/components/primitives/`, one folder per component: `Button/Button.tsx`, `Button.stories.tsx`, `Button.test.tsx`, `index.ts`. `composites/` alongside it holds pieces built out of primitives that are still app-agnostic.
-- Add components with `pnpm --filter @kp-app/ui ui:add <name>` — never by hand, and never straight from the shadcn CLI. The script reshapes the CLI's flat output into that layout.
-- Every component needs both a story and a test. Tests are Vitest + Testing Library (jsdom); query by role and never assert on Tailwind classes.
-- No shipped file in the package may use the `@/` alias — a consuming app maps `@` to its own `src`, so the import would resolve into the app. Primitives reach each other by relative path; `ui:add` rewrites the CLI's output.
-- The package has no build step: `exports` point at `src/`, and consumers compile it. That only works because nothing on the server imports it. A Next.js consumer therefore needs `transpilePackages: ['@kp-app/ui']`.
-- The primitives are vendored with `rsc: false`, so none carries `'use client'`. Stateless ones render fine as React Server Components; a file using an interactive one must add the directive itself.
-- Details in `packages/ui/README.md`.
+- **Brevity:** Make *everything* extremely concise and clear — your responses, documentation, comments, etc.
+- **Naming:** PascalCase for `.tsx`, kebab-case for `.ts`, snake_case for `.py`.
 
-## Design Tokens (packages/ui)
-- Two layers in `packages/ui/src/tokens/`: `primitives.css` holds raw values (`--neutral-500`, `--font-size-2`), `semantics.css` names roles pointing at exactly one primitive (`--muted-foreground: var(--neutral-500)`, `--text-body: var(--font-size-2)`). `theme.css` decides which become utility classes.
-- This applies to EVERY scale, not just color: type, weight, leading, tracking, spacing, elevation, blur and motion all have a ramp in primitives and purpose-named roles in semantics. `theme.css` holds no literals.
-- The sole exception is `--breakpoint-*` and `--container-*`, which must stay literal. CSS forbids `var()` inside a `@media`/`@container` condition, so indirecting one emits invalid CSS the browser drops, or no rule at all — silently. The linter enforces this.
-- Keyframes live at the bottom of `theme.css`, outside `@theme`. Tailwind can't tie a keyframe to an `--animate-*` value that reads a var, and `--*: initial` deletes the ones Tailwind and tw-animate-css ship, so they must be declared explicitly or `animate-*` classes do nothing.
-- Components may ONLY use semantic tokens — via Tailwind classes like `bg-muted`. Never a raw color (`#fff`, `oklch(...)`), never a primitive (`var(--neutral-500)`).
-- `theme.css` opens with `--*: initial`, deleting every Tailwind default. Components can only use what that file declares — `bg-red-500`, `text-9xl`, `font-thin` and bare `rounded` all produce no CSS. Need something new? Add it to `theme.css` (or a semantic token first, for colors).
-- `tokens/index.css` is the single stylesheet every app imports. Its `@source '../components'` line is load-bearing: Tailwind skips `node_modules`, so without it the classes used inside primitives generate no CSS.
-- The package exposes the token linter as a `lint-tokens` binary. Every app's `lint` script runs `lint-tokens src` over its own code, so the rules hold app-side too.
-- Details in `packages/ui/src/tokens/README.md`.
+- **Docs:** after any change, update whichever of these three still describe it —
+  this file, the `docs/` page, the folder's `README.md`.
 
-## API Contract (packages/shared)
-- Every request and response shape is a Zod schema in `packages/shared`, imported by both apps. Never redeclare a shape locally, and never add a server-only DTO — a second copy is the drift this package exists to prevent.
-- Schemas describe the JSON on the wire, not in-memory types: a timestamp is `z.string()`, never `z.date()`. Convert after parsing.
-- Server: validate with `@Body({ schema })`. The parameter's TypeScript annotation must be that schema's `z.infer` — NestJS does not cross-check them.
-- Web: all calls go through `api.get` / `api.post` / … in `apps/web/src/lib/api.ts`. The schema is always the second argument and drives the return type, so a drifted server throws at the boundary. Never call `axios` or `fetch` directly.
-- The package compiles to `dist/`, so run `pnpm --filter @kp-app/shared build` after editing a schema outside the dev watcher.
-- Drizzle owns storage, the contract owns the wire, and neither generates the other. `apps/server/src/modules/users/` is the worked example end to end.
-- The API is mounted at `/api/v1`. Controllers take the bare resource name (`@Controller(usersResource)`); the prefix comes from `setup-app.ts` and the contract's `*Path` exports carry it for clients. Never hardcode `/api/v1` in a controller or a call site.
-- Server code is split by role: `config/` and `db/` are shared infrastructure, `modules/<name>/` is one API slice each (module + controller + service).
-- If a table gains a column the API must not expose, select columns explicitly in the service rather than `select()` — an extra column otherwise flows straight to the client.
-- `packages/shared/src` splits into `constants/` (resource names and paths), `schemas/` (Zod), and `types/` (inferred from the schemas), one file per resource in each. They stack in one direction: constants ← schemas ← types. Adding a resource means one file in each folder plus a line in that folder's `index.ts`.
-- Apps import from the package root (`@kp-app/shared`), never a subfolder. Relative imports inside the package need the `.js` extension — it compiles as `nodenext`.
-- Details in `packages/shared/README.md`.
+## docs/
 
-## Agentic Development
-- Three main sources of documentation: AGENTS.md (CLAUDE.md is a symlink to it), docs/ files, and folder-specific README.md files. After making any changes, make sure the right documentation is subsequently changed too.
-- 
+| Doc                                                                   | Read it when                                                 | Status  |
+| --------------------------------------------------------------------- | ------------------------------------------------------------ | ------- |
+| [guides/frontend.md](docs/guides/frontend.md)                         | Building **any** UI — a page, a component, a style           | Written |
+| [guides/backend.md](docs/guides/backend.md)                           | Touching the **API** — an endpoint, a schema, a table        | Written |
+| [guides/update-harness.md](docs/guides/update-harness.md)             | Changing any doc, guide, or agent config — **read first**    | Written |
+| [architecture/high-level.md](docs/architecture/high-level.md)         | You need the shape of the system before placing something    | Written |
+| [architecture/file-structure.md](docs/architecture/file-structure.md) | You're unsure which package or folder a file belongs in      | Written |
+| [architecture/environments.md](docs/architecture/environments.md)     | Working with env vars, ports, or local vs Docker vs deployed | Written |
+| [architecture/ci.md](docs/architecture/ci.md)                         | A pipeline is failing, or you're adding a check              | Empty   |
+| [architecture/db.md](docs/architecture/db.md)                         | You need the data model without reading `schema.ts`          | Empty   |
+| [product/prd.md](docs/product/prd.md)                                 | You need to know what the product does, or what's in scope   | Empty   |
+| [product/user-stories.md](docs/product/user-stories.md)               | You need a feature's expected behaviour from the user's side | Empty   |
+| [workflows/sdlc.md](docs/workflows/sdlc.md)                           | You need the branch, review and release process              | Empty   |
+| [workflows/zero-to-one.md](docs/workflows/zero-to-one.md)             | Standing up something new from scratch                       | Empty   |
+| [templates/](docs/templates/)                                         | Creating a new PRD, README or AGENTS file                    | Written |
+
+**Empty means empty.** Those files are placeholders with no content yet. Don't
+read them expecting answers, and don't infer that a guide doesn't exist because
+its page is blank — fall back to the READMEs below, then the code.
+
+## Folder READMEs
+
+The detail lives next to the code. The guides above link into these; go straight
+to one when you already know where you're working.
+
+| README                                                                                             | Covers                                                 |
+| -------------------------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| [apps/server/README.md](apps/server/README.md)                                                     | NestJS + Drizzle: scripts, layout, env, migrations     |
+| [apps/web/README.md](apps/web/README.md)                                                           | The React app: scripts, routing, layout                |
+| [apps/landing/README.md](apps/landing/README.md)                                                   | The Next.js landing page and its RSC constraints       |
+| [packages/README.md](packages/README.md)                                                           | The runtime boundary, and why one package builds       |
+| [packages/shared/README.md](packages/shared/README.md)                                             | The API contract — Zod schemas, types, route constants |
+| [packages/ui/README.md](packages/ui/README.md)                                                     | The shared front-end package and how apps consume it   |
+| [packages/ui/src/tokens/README.md](packages/ui/src/tokens/README.md)                               | The design-token layers and what the linter enforces   |
+| [packages/ui/src/components/primitives/README.md](packages/ui/src/components/primitives/README.md) | Component layout, conventions, and `ui:add`            |
+| [apps/web/src/components/README.md](apps/web/src/components/README.md)                             | Where an app component goes                            |

@@ -37,10 +37,12 @@ src/
 ├── index.css       # one line: @import '@kp-app/ui/styles.css'
 ├── app/
 │   ├── routes.ts   # the page list main.tsx maps over
-│   ├── home/Page.tsx
+│   ├── home/
+│   │   ├── Page.tsx      # mock dashboard, placeholder data
+│   │   └── components/   # pieces used by this page only
 │   └── about/Page.tsx
 ├── components/
-│   └── common/     # app-only pieces; shared ones go in @kp-app/ui
+│   └── common/     # pieces used by several pages; cross-app ones go in @kp-app/ui
 └── lib/
     ├── api.ts      # axios client + contract parsing
     └── site.ts
@@ -66,14 +68,18 @@ src/
   `vite.config.ts`. Keep the two in sync, and note it points here, not into
   `@kp-app/ui` — which is why nothing in that package uses the alias.
 - Shared UI comes from `@kp-app/ui`: `import { Button } from '@kp-app/ui'`.
-  App-only components go in `src/components/common/`. See
-  `packages/ui/README.md`.
+  See `packages/ui/README.md`.
+- App components sit as close to their caller as possible. A piece used by one
+  page lives in that page's own `components/` folder; promote it to
+  `src/components/common/` once a second page needs it, and to `@kp-app/ui`
+  once a second app does. See `docs/guides/frontend.md`.
 - Tests are Vitest + Testing Library against jsdom, configured in
   `vitest.config.ts`; `vitest.setup.ts` re-exports the DOM stubs from
   `@kp-app/ui`. Component tests and stories live with the components, in the
   package.
 - Pages live in `src/app/<name>/Page.tsx` and are listed in `src/app/routes.ts`,
-  which `main.tsx` maps into `<Route>` elements.
+  which `main.tsx` maps into `<Route>` elements. `Page.tsx` is the only default
+  export; its sections are named exports in `src/app/<name>/components/`.
 - Every API call goes through `api.get` / `api.post` / … in `src/lib/api.ts`.
   The schema from `@kp-app/shared` is always the second argument and drives
   the return type, so a drifted server throws at the boundary. Never reach for
