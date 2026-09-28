@@ -54,7 +54,9 @@ the document title all read from it. A page not listed there renders nothing.
 Omit `nav` to keep a page out of the header.
 
 Product-wide strings (the app's name, its description) live in
-`src/lib/site.ts`, not inline.
+`src/lib/site.ts`, not inline. A helper that derives or formats a value — no
+rendering, no fetching, no state — goes in `src/lib/utils.ts` rather than at
+the top of the component that happened to need it first.
 
 ### A page owns its parts
 

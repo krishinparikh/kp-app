@@ -5,6 +5,7 @@ import {
   CardHeader,
   CardTitle,
 } from '@kp-app/ui'
+import { percentOf } from '@/lib/utils.ts'
 
 // Placeholder data. Swap for the budgets API once those endpoints exist.
 const budgets = [
@@ -24,10 +25,7 @@ export function BudgetList() {
       </CardHeader>
       <CardContent className="flex flex-col gap-5">
         {budgets.map((budget) => {
-          const percent = Math.min(
-            100,
-            Math.round((budget.spent / budget.limit) * 100),
-          )
+          const percent = percentOf(budget.spent, budget.limit)
           return (
             <div key={budget.label} className="flex flex-col gap-2">
               <div className="flex items-baseline justify-between">

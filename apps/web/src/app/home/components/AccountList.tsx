@@ -8,6 +8,7 @@ import {
   CardTitle,
   Separator,
 } from '@kp-app/ui'
+import { initials } from '@/lib/utils.ts'
 
 // Placeholder data. Swap for the accounts API once those endpoints exist.
 const accounts = [
@@ -16,15 +17,6 @@ const accounts = [
   { name: 'Brokerage', institution: 'Fidelity', balance: '$57,340.55' },
   { name: 'Sapphire Card', institution: 'Chase', balance: '-$1,512.65' },
 ]
-
-/** Two initials for the avatar, from the first two words of a name. */
-function initials(name: string) {
-  return name
-    .split(' ')
-    .slice(0, 2)
-    .map((word) => word[0])
-    .join('')
-}
 
 /** Every connected account and its current balance. */
 export function AccountList() {

@@ -2,7 +2,8 @@ import type { StorybookConfig } from '@storybook/react-vite'
 
 const config: StorybookConfig = {
   // Stories live next to their component: primitives/Button/Button.stories.tsx.
-  // The design-token reference page sits in src/tokens/ alongside them.
+  // The two design-token pages sit in src/tokens/ alongside them; the helpers
+  // they share are in TokenPreview.tsx, which this glob deliberately skips.
   // Add '../src/**/*.mdx' here if you ever write a hand-authored docs page.
   stories: ['../src/**/*.stories.@(ts|tsx)'],
   addons: [

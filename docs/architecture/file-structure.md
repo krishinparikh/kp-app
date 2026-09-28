@@ -100,7 +100,8 @@ kp-app/
 │   │           ├── api.ts            axios client + contract parsing
 │   │           ├── api.test.ts
 │   │           ├── query-client.ts   query defaults: retry rule, staleTime
-│   │           └── site.ts           product-wide strings
+│   │           ├── site.ts           product-wide strings
+│   │           └── utils.ts          small pure helpers components share
 │   │
 │   ├── landing/                    # Next.js 16, App Router                :3000
 │   │   ├── README.md

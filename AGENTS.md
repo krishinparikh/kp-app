@@ -9,30 +9,27 @@ what you're about to change before you change it.
 - **Brevity:** Make *everything* extremely concise and clear — your responses, documentation, comments, etc.
 - **Naming:** PascalCase for `.tsx`, kebab-case for `.ts`, snake_case for `.py`.
 
-- **Docs:** after any change, update whichever of these three still describe it —
-  this file, the `docs/` page, the folder's `README.md`.
 
 ## docs/
 
+These docs serve as the harness for coding agents. Each doc assumes the ones above it, so start at the top
+and stop when you know enough for the task.
+
 | Doc                                                                   | Read it when                                                 | Status  |
 | --------------------------------------------------------------------- | ------------------------------------------------------------ | ------- |
-| [guides/frontend.md](docs/guides/frontend.md)                         | Building **any** UI — a page, a component, a style           | Written |
-| [guides/backend.md](docs/guides/backend.md)                           | Touching the **API** — an endpoint, a schema, a table        | Written |
 | [guides/update-harness.md](docs/guides/update-harness.md)             | Changing any doc, guide, or agent config — **read first**    | Written |
+| [product/prd.md](docs/product/prd.md)                                 | You need to know what the product does, or what's in scope   | Empty   |
 | [architecture/high-level.md](docs/architecture/high-level.md)         | You need the shape of the system before placing something    | Written |
 | [architecture/file-structure.md](docs/architecture/file-structure.md) | You're unsure which package or folder a file belongs in      | Written |
-| [architecture/environments.md](docs/architecture/environments.md)     | Working with env vars, ports, or local vs Docker vs deployed | Written |
-| [architecture/ci.md](docs/architecture/ci.md)                         | A pipeline is failing, or you're adding a check              | Empty   |
-| [architecture/db.md](docs/architecture/db.md)                         | You need the data model without reading `schema.ts`          | Empty   |
-| [product/prd.md](docs/product/prd.md)                                 | You need to know what the product does, or what's in scope   | Empty   |
 | [product/user-stories.md](docs/product/user-stories.md)               | You need a feature's expected behaviour from the user's side | Empty   |
+| [guides/frontend.md](docs/guides/frontend.md)                         | Building **any** UI — a page, a component, a style           | Written |
+| [guides/backend.md](docs/guides/backend.md)                           | Touching the **API** — an endpoint, a schema, a table        | Written |
+| [architecture/environments.md](docs/architecture/environments.md)     | Working with env vars, ports, or local vs Docker vs deployed | Written |
+| [architecture/db.md](docs/architecture/db.md)                         | You need the data model without reading `schema.ts`          | Empty   |
+| [architecture/ci.md](docs/architecture/ci.md)                         | A pipeline is failing, or you're adding a check              | Empty   |
 | [workflows/sdlc.md](docs/workflows/sdlc.md)                           | You need the branch, review and release process              | Empty   |
 | [workflows/zero-to-one.md](docs/workflows/zero-to-one.md)             | Standing up something new from scratch                       | Empty   |
 | [templates/](docs/templates/)                                         | Creating a new PRD, README or AGENTS file                    | Written |
-
-**Empty means empty.** Those files are placeholders with no content yet. Don't
-read them expecting answers, and don't infer that a guide doesn't exist because
-its page is blank — fall back to the READMEs below, then the code.
 
 ## Folder READMEs
 

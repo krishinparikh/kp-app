@@ -47,7 +47,8 @@ src/
 └── lib/
     ├── api.ts           # axios client + contract parsing
     ├── query-client.ts  # TanStack Query defaults: retry rule, staleTime
-    └── site.ts
+    ├── site.ts
+    └── utils.ts         # small pure helpers, e.g. initials()
 ```
 
 ## Notes

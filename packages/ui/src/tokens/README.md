@@ -11,8 +11,10 @@ tokens/
 ├── semantics.css    # roles, each pointing at one primitive
 ├── theme.css        # which tokens become utility classes — and which of
 │                    #   Tailwind's own defaults survive (none, by default)
-├── tokens.ts        # parses the two token files for the Storybook page
-└── Tokens.stories.tsx
+├── tokens.ts        # parses the two token files for the Storybook pages
+├── TokenPreview.tsx # the swatches and tables both pages render with
+├── Primitives.stories.tsx
+└── Semantics.stories.tsx
 ```
 
 `index.css` imports them in that order and is what an app reaches for:
@@ -21,8 +23,9 @@ tokens/
 @import '@kp-app/ui/styles.css';
 ```
 
-See them rendered under **Design Tokens → Reference** in Storybook
-(`pnpm --filter @kp-app/ui storybook`).
+See them rendered in Storybook (`pnpm --filter @kp-app/ui storybook`) under
+**Design Tokens → Primitives** for the raw ramps and **Design Tokens →
+Semantics** for the roles, each showing the primitive it resolves to.
 
 It also carries one line an app-local stylesheet wouldn't need:
 
