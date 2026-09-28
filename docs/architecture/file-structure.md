@@ -87,15 +87,19 @@ kp-app/
 │   │       ├── app/                # the pages
 │   │       │   ├── routes.ts         the page list: routes, nav and titles
 │   │       │   ├── home/
-│   │       │   │   └── Page.tsx      one default export per page
+│   │       │   │   ├── Page.tsx      one default export per page
+│   │       │   │   └── components/   this page's sections, named exports
 │   │       │   └── about/
 │   │       │       └── Page.tsx
 │   │       ├── components/
 │   │       │   ├── README.md
 │   │       │   └── common/         # pieces several pages share (empty)
+│   │       ├── hooks.ts            # one TanStack Query hook per operation
+│   │       ├── hooks.test.tsx
 │   │       └── lib/
 │   │           ├── api.ts            axios client + contract parsing
 │   │           ├── api.test.ts
+│   │           ├── query-client.ts   query defaults: retry rule, staleTime
 │   │           └── site.ts           product-wide strings
 │   │
 │   ├── landing/                    # Next.js 16, App Router                :3000

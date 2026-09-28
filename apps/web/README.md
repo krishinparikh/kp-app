@@ -38,13 +38,15 @@ src/
 ├── app/
 │   ├── routes.ts   # the page list main.tsx maps over
 │   ├── home/
-│   │   ├── Page.tsx      # mock dashboard, placeholder data
-│   │   └── components/   # pieces used by this page only
+│   │   ├── Page.tsx      # composes the dashboard's sections
+│   │   └── components/   # those sections; People.tsx is the one on real data
 │   └── about/Page.tsx
 ├── components/
 │   └── common/     # pieces used by several pages; cross-app ones go in @kp-app/ui
+├── hooks.ts        # TanStack Query hooks — one per API operation
 └── lib/
-    ├── api.ts      # axios client + contract parsing
+    ├── api.ts           # axios client + contract parsing
+    ├── query-client.ts  # TanStack Query defaults: retry rule, staleTime
     └── site.ts
 ```
 
@@ -84,6 +86,14 @@ src/
   The schema from `@kp-app/shared` is always the second argument and drives
   the return type, so a drifted server throws at the boundary. Never reach for
   `axios` or `fetch` directly, and never redeclare a response shape here.
+- Every failure rejects with axios's own `AxiosError`, whether it came from the
+  network, a non-2xx, or a schema mismatch — there is no wrapper class and no
+  error kinds of ours. Branch on `error.response` / `error.request` the way
+  axios documents. See `docs/guides/frontend.md`.
+- Components don't call `api.*` themselves — `src/hooks.ts` holds a TanStack
+  Query hook per operation, and the users hooks there are the worked CRUD
+  example. The provider is in `main.tsx`, its defaults in
+  `src/lib/query-client.ts`.
 - Under Docker, file watching falls back to polling (`VITE_IN_DOCKER=1`), because
   macOS bind mounts don't forward filesystem events.
 - Prettier and its ignore file live at the repo root, shared with `server`.

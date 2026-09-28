@@ -154,8 +154,63 @@ return type, so a server that drifts throws at the boundary instead of leaking
 bad data into the UI. Never call `axios` or `fetch` directly, never redeclare a
 shape in the app, and never hardcode `/api/v1` — the `*Path` exports carry it.
 
-There is no server-state library yet. If a screen needs caching, adding one is
-a decision to raise, not a default to assume.
+Every failure rejects with axios's own `AxiosError` — there is no wrapper
+class and no error kinds of ours. Read it the way axios documents it:
+
+```ts
+if (error.response) {
+  // the server answered; error.status is set
+} else if (error.request) {
+  // it went out and nothing came back — network, timeout, abort
+} else {
+  // it never went out
+}
+```
+
+That first branch is also the retry rule: no `response` means no handler ever
+saw the request, so it is worth a second attempt. `error.code` names the case
+when you need it — `ERR_NETWORK`, `ECONNABORTED` for the 30s limit,
+`ERR_CANCELED`, `ERR_BAD_RESPONSE` when the body did not match the contract.
+
+On a non-2xx the interceptor in `api.ts` replaces `message` with the server's
+own, flattened by `apiErrorMessage` so a validation pipe's list reads as one
+line. That is the only thing `api.ts` does to an error. When a schema rejects
+a body, the ZodError stays on `cause` for logging.
+
+Don't render `error.message` straight at the user unless `response` is set —
+that is the only case where it holds words the server wrote. Everywhere else
+axios writes for developers, so supply your own copy.
+
+Don't validate a request body before sending it. The server validates with the
+same schema from `@kp-app/shared`, and its 400 carries a better message than
+the client could invent.
+
+Components never call `api.*` directly. `apps/web/src/hooks.ts` holds one
+hook per operation and the page renders what the hook returns. The users hooks
+are the worked example — full CRUD, with `hooks.test.tsx` beside them showing
+each one driven, and `app/home/components/People.tsx` showing a query and a
+mutation on one screen: pending, error with a retry, empty, and a form whose
+success invalidates the list.
+
+Group the hooks by resource within the file. Split it into `src/hooks/` — one
+module per resource — once that stops being readable.
+
+```ts
+const { data, isPending, error } = useUsers()
+```
+
+TanStack Query owns caching and retries; `api.ts` owns the request and the
+parse. A hook writes no type arguments: `query-client.ts` registers
+`AxiosError` as the library's default error, so `error.status` narrows without
+any hook naming the type. Defaults live in that same file, which retries only
+failures carrying no `response` — a 404 is the server's answer and will not
+change on a second try — and never retries a mutation.
+
+Query keys are built from the `*Path` constant, so a key cannot drift from the
+URL it fetches. Keep them in one `keys` object per resource with the list key
+as a prefix of the detail key; invalidating the prefix then clears both. After
+a write, invalidate rather than editing the cache by hand — reach for
+`setQueryData` only for optimistic UI.
 
 For a mock screen with no endpoint behind it, hold the placeholder data in the
 component file and say so in a comment. Don't add a "use mocks" flag to
