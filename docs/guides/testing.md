@@ -162,6 +162,9 @@ If you can't remember watching it go red, it may not be wired to anything.
 **Coverage rising while risk doesn't.** Tier-3 tests move the number. Read
 which lines are uncovered instead of the percentage.
 
+**A seeded row an assertion didn't create.** `pnpm db:seed` fills the dev
+database only, and refuses a `_test` one. Tests build what they assert on.
+
 **An e2e test that leaves rows behind.** Clear the tables you touch in
 `afterEach` and `app.close()` in `afterAll`, or the next run fails on data the
 last one wrote.

@@ -33,6 +33,7 @@ kp-app/
 │   │   ├── drizzle.config.ts       # points drizzle-kit at src/db/schema.ts
 │   │   ├── tsconfig.json
 │   │   ├── tsconfig.build.json
+│   │   ├── scripts/seed.ts         # fills the dev database; never the test one
 │   │   ├── vitest.config.ts        # fast suites — **/*.{unit,int}.test.ts
 │   │   ├── vitest.config.e2e.ts    # e2e — test/*.e2e.test.ts
 │   │   ├── drizzle/                # generated migrations, checked in

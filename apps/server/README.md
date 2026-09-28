@@ -21,6 +21,7 @@ pnpm --filter server dev
 | `pnpm typecheck`   | Type-check without emitting                   |
 | `pnpm db:generate` | Generate a migration from schema changes      |
 | `pnpm db:migrate`  | Apply pending migrations                      |
+| `pnpm db:seed`     | Fill the **dev** database with a few users    |
 | `pnpm db:studio`   | Drizzle Studio, a browser UI for the database |
 
 ## Layout

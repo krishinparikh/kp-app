@@ -27,7 +27,7 @@ and stop when you know enough for the task.
 | [guides/testing.md](docs/guides/testing.md)                           | Writing or reviewing a test — what counts as worth keeping   | Written |
 | [architecture/environments.md](docs/architecture/environments.md)     | Working with env vars, ports, or local vs Docker vs deployed | Written |
 | [architecture/db.md](docs/architecture/db.md)                         | You need the data model without reading `schema.ts`          | Empty   |
-| [architecture/ci.md](docs/architecture/ci.md)                         | A pipeline is failing, or you're adding a check              | Empty   |
+| [architecture/ci.md](docs/architecture/ci.md)                         | A pipeline is failing, or you're adding a check              | Written |
 | [workflows/sdlc.md](docs/workflows/sdlc.md)                           | You need the branch, review and release process              | Empty   |
 | [workflows/zero-to-one.md](docs/workflows/zero-to-one.md)             | Standing up something new from scratch                       | Empty   |
 | [templates/](docs/templates/)                                         | Creating a new PRD, README or AGENTS file                    | Written |

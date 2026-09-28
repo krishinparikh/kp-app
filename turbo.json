@@ -4,6 +4,7 @@
   "globalEnv": [
     "NODE_ENV",
     "DATABASE_URL",
+    "DATABASE_URL_TEST",
     "CORS_ORIGINS",
     "BACKEND_PORT",
     "FRONTEND_PORT",
