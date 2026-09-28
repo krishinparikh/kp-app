@@ -3,8 +3,7 @@ import tsconfigPaths from 'vite-tsconfig-paths'
 import { defineConfig } from 'vitest/config'
 
 // The repo root .env is the single source of truth for credentials and ports,
-// so read it the way ConfigModule does at runtime rather than hardcoding a
-// port here. An empty prefix loads every key, not just VITE_*.
+// port here, rather than hardcoding one. An empty prefix loads every key.
 const env = { ...loadEnv('test', '../../', ''), ...process.env }
 
 /**
@@ -31,7 +30,7 @@ export default defineConfig({
     include: ['**/*.e2e.test.ts'],
     // Creates the database and migrates it, once for the whole run.
     globalSetup: ['./test/setup.ts'],
-    // DbModule reads DATABASE_URL through ConfigService.
+    // src/env.ts reads DATABASE_URL from process.env.
     env: { DATABASE_URL: testDatabaseUrl },
   },
 })

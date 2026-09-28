@@ -4,10 +4,10 @@ import {
   Module,
   type OnApplicationShutdown,
 } from '@nestjs/common'
-import { ConfigService } from '@nestjs/config'
 import { drizzle, type PostgresJsDatabase } from 'drizzle-orm/postgres-js'
 import postgres from 'postgres'
 
+import { env } from '../env.js'
 import * as schema from './schema.js'
 
 export const DB = 'DB'
@@ -20,11 +20,9 @@ export type Database = PostgresJsDatabase<typeof schema>
   providers: [
     {
       provide: PG_CLIENT,
-      inject: [ConfigService],
       // postgres.js connects lazily, so nothing hits the network until the
       // first query.
-      useFactory: (config: ConfigService) =>
-        postgres(config.getOrThrow<string>('DATABASE_URL')),
+      useFactory: () => postgres(env.DATABASE_URL),
     },
     {
       provide: DB,

@@ -29,7 +29,7 @@ that is the point. See [frontend.md](frontend.md) for the client half.
 | A whole new resource                      | `apps/server/src/modules/<name>/` + a line in `app.module.ts` |
 | A request or response shape               | `packages/shared/src/{constants,schemas,types}/<name>.ts`     |
 | A table or a column                       | `apps/server/src/db/schema.ts` + a migration                  |
-| An environment variable                   | `apps/server/src/config/env.ts` + `.env.example`              |
+| An environment variable                   | `src/env.ts` (the schema lives there) + `.env.example`        |
 | Anything app-wide (prefix, pipes, guards) | `apps/server/src/setup-app.ts` — **never** `main.ts`          |
 
 `config/` and `db/` are infrastructure the whole app shares. Everything under

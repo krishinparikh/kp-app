@@ -6,6 +6,8 @@ import axios, {
 } from 'axios'
 import type { z } from 'zod'
 
+import { env } from '../env.ts'
+
 /**
  * Single axios instance. Requests are cross-origin — the web app runs on 5173
  * and the API on 8000 — so `baseURL` points at VITE_API_URL and
@@ -13,7 +15,7 @@ import type { z } from 'zod'
  * enableCors({ credentials: true }).
  */
 export const apiClient = axios.create({
-  baseURL: import.meta.env.VITE_API_URL ?? '',
+  baseURL: env.VITE_API_URL,
   withCredentials: true,
   timeout: 30_000,
 })

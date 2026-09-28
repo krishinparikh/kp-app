@@ -33,7 +33,6 @@ src/
 ├── app.module.ts         # root module, env loading
 ├── config/
 │   ├── env.ts            # Zod-validated environment
-│   └── database-url.ts   # URL scheme normalizing
 ├── db/
 │   ├── db.module.ts      # global module providing the DB token
 │   └── schema.ts         # Drizzle tables
@@ -58,7 +57,8 @@ the path — `nest g resource modules/accounts` — or move the folder after.
 - Environment variables come from the **repo root** `.env`, not this directory —
   `app.module.ts` sets `envFilePath: '../../.env'`. Inside Docker that file is
   absent and compose injects the values as real environment variables instead.
-- `config/env.ts` validates the environment with Zod at boot, so a missing or
+- `src/env.ts` parses `process.env` with a `@kp-app/shared` schema at boot and
+  exports a typed `env`, so a missing or
   malformed variable fails immediately rather than at first use. Defaults there
   mirror `.env.example`.
 - Inject the database with the `DB` token, typed as `Database`:

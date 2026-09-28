@@ -7,11 +7,11 @@ Configuration, ports, and the three ways to run this stack.
 A single `.env` at the repo root feeds everything. Copy `.env.example` to get
 started — every value there is already a working default.
 
-| Consumer             | How it reads the root `.env`                      |
-| -------------------- | ------------------------------------------------- |
-| `docker-compose.yml` | `${VAR}` interpolation (only ever reads the root) |
-| `apps/server`        | `@nestjs/config`, `envFilePath: '../../.env'`     |
-| `apps/web`           | Vite, `envDir: '../../'`                          |
+| Consumer             | How it reads the root `.env`                        |
+| -------------------- | --------------------------------------------------- |
+| `docker-compose.yml` | `${VAR}` interpolation (only ever reads the root)   |
+| `apps/server`        | `process.loadEnvFile('../../.env')` in `src/env.ts` |
+| `apps/web`           | Vite, `envDir: '../../'`                            |
 
 Three things worth knowing:
 
@@ -19,9 +19,10 @@ Three things worth knowing:
   credentials in this file stay server-side.
 - **`DATABASE_URL` points at `localhost`** for native runs. Compose overrides it
   to the `db` service hostname inside containers.
-- **The server validates its environment at boot** with Zod
-  (`apps/server/src/config/env.ts`), so a missing or malformed value fails
-  immediately instead of at first use.
+- **Each app validates its environment at boot** with a Zod schema in its own
+  `src/env.ts` — the server parses `process.env`, the web app
+  `import.meta.env`. Both export a typed `env`, and a missing or malformed
+  value fails at boot rather than at first use.
 
 `apps/landing` reads no environment at all.
 

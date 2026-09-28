@@ -43,11 +43,9 @@ kp-app/
 │   │   │       └── 0000_snapshot.json
 │   │   ├── src/
 │   │   │   ├── main.ts             # bootstrap, CORS, shutdown hooks, listen
+│   │   │   ├── env.ts              # parses process.env; exports the typed `env`
 │   │   │   ├── setup-app.ts        # /api prefix + versioning; used by e2e too
-│   │   │   ├── app.module.ts       # env, global validation pipe, module list
-│   │   │   ├── config/             # infrastructure, shared by every module
-│   │   │   │   ├── env.ts            Zod-validated environment
-│   │   │   │   └── database-url.ts   URL scheme normalizing
+│   │   │   ├── app.module.ts       # global validation pipe, module list
 │   │   │   ├── db/                 # infrastructure, shared by every module
 │   │   │   │   ├── db.module.ts      @Global — provides the `DB` token
 │   │   │   │   └── schema.ts         Drizzle tables; migrations diff this
@@ -85,6 +83,7 @@ kp-app/
 │   │   │   └── favicon.svg
 │   │   └── src/
 │   │       ├── main.tsx            # createRoot, TooltipProvider, router
+│   │       ├── env.ts              # parses import.meta.env; exports typed `env`
 │   │       ├── App.tsx             # layout shell, renders routes via <Outlet />
 │   │       ├── index.css           # one line: @import '@kp-app/ui/styles.css'
 │   │       ├── app/                # the pages
