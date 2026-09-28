@@ -15,7 +15,7 @@ pnpm --filter server dev
 | `pnpm dev`         | Dev server on http://localhost:8000, watching |
 | `pnpm build`       | Compile to `dist/`                            |
 | `pnpm start:prod`  | Run the compiled build                        |
-| `pnpm test`        | Unit tests (`*.spec.ts`)                      |
+| `pnpm test`        | Unit + integration (no database)              |
 | `pnpm test:e2e`    | End-to-end tests — **needs Postgres running** |
 | `pnpm lint`        | Oxlint                                        |
 | `pnpm typecheck`   | Type-check without emitting                   |
@@ -71,20 +71,27 @@ the path — `nest g resource modules/accounts` — or move the folder after.
   `main.ts`. Skip that and containers hang on SIGTERM.
 - This package is ESM (`"type": "module"`), so relative imports need the `.js`
   extension even though the files are `.ts`.
-- **The API is served under `/api/v1`**, via `setGlobalPrefix('api')` plus URI
-  versioning in `setup-app.ts`. `/health` is excluded from both and stays at
-  the root — probes and the compose healthcheck want a URL a version bump
-  doesn't move. A v2 endpoint is per-controller:
-  `@Controller({ path: 'users', version: '2' })`.
+- **The API is served under `/v1`**, via URI versioning in `setup-app.ts`.
+  `src/setup-app.int.test.ts` asserts the routes Nest really registers match the
+  `*Path` exports, because `apiPrefix` in the contract is a literal nothing
+  type-checks against them.
+  There is no `/api` segment — the API answers on its own host, so it would
+  only stutter. `/health` opts out with `VERSION_NEUTRAL` on its own
+  controller and stays at the root, because probes and the compose
+  healthcheck want a URL a version bump doesn't move. A v2 endpoint is
+  per-controller: `@Controller({ path: 'users', version: '2' })`.
 - **Anything app-wide goes in `setup-app.ts`, not `main.ts`.** Tests build the
   app with `createNestApplication()`, which never runs `main.ts`, so setup
   placed there is silently missing from every e2e test.
 - **A path outside the prefix isn't Nest's.** Unmatched routes fall through to
   Express and get an HTML 404, not the JSON error body the contract describes.
   Assert error shapes against real handler errors, not routing misses.
-- **`test:e2e` talks to a real database.** Start one with `docker compose up -d
-db` (or `make up`) first. Each spec clears the tables it touches in
-  `afterEach`. Unit tests (`pnpm test`) need nothing.
+- **`test:e2e` talks to a real database — its own.** Start Postgres with
+  `docker compose up -d db` (or `make up`); `test/setup.ts`
+  creates `<POSTGRES_DB>_test` if it's missing and migrates it. The URL comes
+  from `vitest.config.e2e.ts`, derived from the root `.env`, so a suite cannot
+  reach the dev database — it truncates every table in `afterEach`. Override
+  the whole thing with `DATABASE_URL_TEST`. `pnpm test` needs nothing.
 - **Drizzle wraps driver errors.** A Postgres SQLSTATE like `23505` sits on
   `error.cause`, not on the error you catch, so walk the cause chain — see
   `hasSqlState` in `users.service.ts`.

@@ -8,7 +8,7 @@ there is no code generation step.
 src/
 ├── index.ts      # barrel, re-exports all three folders
 ├── constants/    # resource names and paths — depends on nothing
-│   ├── http.ts     the /api/v1 prefix
+│   ├── http.ts     the /v1 prefix
 │   ├── health.ts   one file per resource
 │   └── users.ts
 ├── schemas/      # the Zod schemas, which read the constants

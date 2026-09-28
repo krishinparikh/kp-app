@@ -11,7 +11,7 @@ primitives/
 └── Button/
     ├── Button.tsx          # the component
     ├── Button.stories.tsx  # Storybook stories
-    ├── Button.test.tsx     # Vitest + Testing Library
+    ├── Button.unit.test.tsx  # Vitest + Testing Library
     └── index.ts            # re-exports Button.tsx
 ```
 

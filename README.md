@@ -62,7 +62,7 @@ First run pulls base images and installs dependencies, so expect a few minutes.
 Later runs are fast. Then:
 
 - Web app — http://localhost:5173
-- API — http://localhost:8000/api/v1 (e.g. `/api/v1/users`)
+- API — http://localhost:8000/v1 (e.g. `/v1/users`)
 - Health check — http://localhost:8000/health
 
 Source directories are bind-mounted, so edits hot-reload in the containers. Stop

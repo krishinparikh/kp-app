@@ -33,8 +33,8 @@ kp-app/
 │   │   ├── drizzle.config.ts       # points drizzle-kit at src/db/schema.ts
 │   │   ├── tsconfig.json
 │   │   ├── tsconfig.build.json
-│   │   ├── vitest.config.ts        # unit specs — src/**/*.spec.ts
-│   │   ├── vitest.config.e2e.ts    # e2e specs — test/*.e2e-spec.ts
+│   │   ├── vitest.config.ts        # fast suites — **/*.{unit,int}.test.ts
+│   │   ├── vitest.config.e2e.ts    # e2e — test/*.e2e.test.ts
 │   │   ├── drizzle/                # generated migrations, checked in
 │   │   │   ├── 0000_add_users_table.sql
 │   │   │   └── meta/
@@ -53,16 +53,18 @@ kp-app/
 │   │   │   └── modules/            # one folder per API slice
 │   │   │       ├── health/
 │   │   │       │   ├── health.controller.ts       GET /health, unversioned
-│   │   │       │   ├── health.controller.spec.ts
+│   │   │       │   ├── health.controller.unit.test.ts
 │   │   │       │   └── health.module.ts
 │   │   │       └── users/          # the worked example: CRUD over one table
 │   │   │           ├── users.controller.ts
-│   │   │           ├── users.controller.spec.ts
+│   │   │           ├── users.controller.unit.test.ts
 │   │   │           ├── users.service.ts
 │   │   │           └── users.module.ts
 │   │   └── test/                   # e2e — boots the app against a real database
-│   │       ├── health.e2e-spec.ts
-│   │       └── users.e2e-spec.ts
+│   │       ├── health.e2e.test.ts
+│   │       ├── users.e2e.test.ts
+│   │       ├── setup.ts            # creates, migrates and truncates the test db
+│   │       └── factories.ts        # fixtures, parsed with the contract
 │   │
 │   ├── web/                        # React 19 + Vite 8 + React Router 8    :5173
 │   │   ├── README.md
@@ -95,10 +97,10 @@ kp-app/
 │   │       │   ├── README.md
 │   │       │   └── common/         # pieces several pages share (empty)
 │   │       ├── hooks.ts            # one TanStack Query hook per operation
-│   │       ├── hooks.test.tsx
+│   │       ├── hooks.int.test.tsx
 │   │       └── lib/
 │   │           ├── api.ts            axios client + contract parsing
-│   │           ├── api.test.ts
+│   │           ├── api.int.test.ts
 │   │           ├── query-client.ts   query defaults: retry rule, staleTime
 │   │           ├── site.ts           product-wide strings
 │   │           └── utils.ts          small pure helpers components share
@@ -134,7 +136,7 @@ kp-app/
 │   │       ├── index.ts            # barrel over all three folders
 │   │       ├── constants/          # resource names and paths — depends on nothing
 │   │       │   ├── index.ts
-│   │       │   ├── http.ts           the /api/v1 prefix
+│   │       │   ├── http.ts           the /v1 prefix
 │   │       │   ├── health.ts
 │   │       │   └── users.ts
 │   │       ├── schemas/            # the Zod schemas, which read the constants
@@ -177,7 +179,7 @@ kp-app/
 │           │   ├── semantics.css     roles, each pointing at one primitive
 │           │   ├── theme.css         which tokens become utility classes
 │           │   ├── tokens.ts         parses the token files for Storybook
-│           │   ├── tokens.test.ts
+│           │   ├── tokens.unit.test.ts
 │           │   └── Tokens.stories.tsx
 │           └── components/
 │               ├── composites/     # built from primitives, app-agnostic (empty)
@@ -187,7 +189,7 @@ kp-app/
 │                   ├── Button/       the shape every primitive follows
 │                   │   ├── Button.tsx
 │                   │   ├── Button.stories.tsx
-│                   │   ├── Button.test.tsx
+│                   │   ├── Button.unit.test.tsx
 │                   │   └── index.ts
 │                   └── …             same four files each: Accordion, Alert,
 │                                     AlertDialog, Avatar, Badge, Card, Checkbox,

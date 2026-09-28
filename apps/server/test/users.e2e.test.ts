@@ -12,7 +12,8 @@ import request from 'supertest'
 import { AppModule } from './../src/app.module.js'
 import { configureApp } from './../src/setup-app.js'
 import { DB, type Database } from './../src/db/db.module.js'
-import { users } from './../src/db/schema.js'
+import { aUser } from './factories.js'
+import { truncateAll } from './setup.js'
 
 // Runs against the real Postgres in compose — `make up` (or `docker compose up
 // -d db`) first. Every assertion parses with the contract schema, so a drift
@@ -21,15 +22,7 @@ describe('UsersController (e2e)', () => {
   let app: INestApplication
   let db: Database
 
-  const newUser = (overrides: Partial<CreateUser> = {}): CreateUser => ({
-    firstName: 'Ada',
-    lastName: 'Lovelace',
-    email: `ada-${crypto.randomUUID()}@example.com`,
-    dob: '1815-12-10',
-    ...overrides,
-  })
-
-  const create = async (body: CreateUser = newUser()) => {
+  const create = async (body: CreateUser = aUser()) => {
     const response = await request(app.getHttpServer())
       .post(usersPath)
       .send(body)
@@ -47,16 +40,14 @@ describe('UsersController (e2e)', () => {
     db = app.get<Database>(DB)
   })
 
-  afterEach(async () => {
-    await db.delete(users)
-  })
+  afterEach(() => truncateAll(db))
 
   afterAll(async () => {
     await app.close()
   })
 
   it('creates a user and returns the contract shape', async () => {
-    const created = await create(newUser({ email: 'ada@example.com' }))
+    const created = await create(aUser({ email: 'ada@example.com' }))
 
     expect(created).toMatchObject({
       firstName: 'Ada',
@@ -131,7 +122,7 @@ describe('UsersController (e2e)', () => {
   })
 
   it('rejects a duplicate email with 409', async () => {
-    const body = newUser({ email: 'dupe@example.com' })
+    const body = aUser({ email: 'dupe@example.com' })
     await create(body)
 
     await request(app.getHttpServer()).post(usersPath).send(body).expect(409)

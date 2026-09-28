@@ -8,6 +8,8 @@
     "build": "tsc -b && vite build",
     "lint": "oxlint && lint-tokens src",
     "test": "vitest run",
+    "test:unit": "vitest run .unit.test --passWithNoTests",
+    "test:int": "vitest run .int.test --passWithNoTests",
     "test:watch": "vitest",
     "format": "prettier --write .",
     "format:check": "prettier --check .",

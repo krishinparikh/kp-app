@@ -40,7 +40,7 @@ resource? A module. Does every module need it? Infrastructure.
 
 - Server files are `.ts` and **kebab-case**, in the pattern
   `<resource>.<role>.ts` — `users.controller.ts`, `users.service.ts`,
-  `users.module.ts`, `users.controller.spec.ts`.
+  `users.module.ts`, `users.controller.unit.test.ts`.
 - Classes are PascalCase and match the file: `UsersController`.
 - `apps/server` and `packages/shared` are both ESM (`nodenext`), so **relative
   imports need the `.js` extension** even though the file on disk is `.ts`:
@@ -66,11 +66,11 @@ against it.
 4. **Write the module** — `src/modules/<name>/`, three files (below).
 5. **Register it** in `app.module.ts`'s `imports`. A module not listed there
    serves nothing, with no error.
-6. **Test both ways** — a `.spec.ts` beside the controller and an
-   `.e2e-spec.ts` in `test/`.
+6. **Test both ways** — a `.unit.test.ts` beside the controller and an
+   `.e2e.test.ts` in `test/`.
 
 Controllers take the **bare resource name** — `@Controller(usersResource)`. The
-`/api/v1` prefix comes from `setup-app.ts`, and the contract's `*Path` exports
+`/v1` prefix comes from `setup-app.ts`, and the contract's `*Path` exports
 carry it for clients. Never hardcode it on either side.
 
 ### A module owns its parts
@@ -82,13 +82,13 @@ src/modules/users/
 ├── users.controller.ts        # HTTP only — routes, validation, status codes
 ├── users.service.ts           # the work — queries, business rules, errors
 ├── users.module.ts            # wiring: which controllers, which providers
-└── users.controller.spec.ts   # the unit test, beside what it tests
+└── users.controller.unit.test.ts  # the unit test, beside what it tests
 ```
 
 - **The controller does HTTP, the service does work.** A Drizzle query in a
   controller is the smell; so is an `@Get()` in a service. The controller should
   read as a list of routes, each one line.
-- **Keep the test beside the code.** `users.controller.spec.ts` lives in the
+- **Keep the test beside the code.** `users.controller.unit.test.ts` lives in the
   module folder. Only end-to-end specs live apart, in `test/`, because they
   boot the whole app.
 - **Don't reach into another module's folder.** If `accounts` needs
@@ -171,21 +171,30 @@ to copy.
 
 Two suites, with different costs:
 
-| Suite      | Command         | Files                | Needs Postgres |
-| ---------- | --------------- | -------------------- | -------------- |
-| Unit       | `pnpm test`     | `src/**/*.spec.ts`   | No             |
-| End-to-end | `pnpm test:e2e` | `test/*.e2e-spec.ts` | **Yes**        |
+| Suite       | Command          | Files                   | Needs Postgres |
+| ----------- | ---------------- | ----------------------- | -------------- |
+| Unit        | `pnpm test:unit` | `src/**/*.unit.test.ts` | No             |
+| Integration | `pnpm test:int`  | `src/**/*.int.test.ts`  | No             |
+| End-to-end  | `pnpm test:e2e`  | `test/*.e2e.test.ts`    | **Yes**        |
+
+`pnpm test` runs unit and integration together — everything that doesn't need
+a database. See [testing.md](testing.md) for which kind a test should be.
 
 - **Unit specs check wiring.** Mock the service, assert the controller passes
   arguments through. Don't mock Drizzle — that tests the mock.
-- **E2E specs check the contract.** They run against the real database, so
-  start one first (`make up`, or `docker compose up -d db`). Build the app with
-  `Test.createTestingModule(...)` **and `configureApp(...)`** — the URL prefix
-  lives there, and skipping it 404s every request.
+- **E2E specs check the contract.** They run against a database of their own,
+  `<POSTGRES_DB>_test`, created and migrated by `test/setup.ts`
+  on every run. Start Postgres first (`make up`, or `docker compose up -d db`);
+  nothing else is needed. Build the app with `Test.createTestingModule(...)`
+  **and `configureApp(...)`** — the URL prefix lives there, and skipping it
+  404s every request.
 - **Parse every e2e response with the contract schema.** That parse is what
   catches the API drifting from what the contract promises. Asserting on a bare
   object doesn't.
-- Clear the tables you touch in `afterEach`, and `app.close()` in `afterAll`.
+- `afterEach(() => truncateAll(db))` and `app.close()` in `afterAll`.
+  `truncateAll` reads the schema, so a new table needs no new cleanup.
+- Build fixtures with the factories in `test/factories.ts` — they parse with
+  the contract, so a fixture that drifts fails where it's written.
 
 ## Before you call it done
 

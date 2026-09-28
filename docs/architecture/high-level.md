@@ -27,7 +27,7 @@ graph TB
 
     Browser --> landing
     Browser --> web
-    web -->|"HTTP /api/v1"| server
+    web -->|"HTTP /v1"| server
     server --> db
 
     ui -.-> landing
@@ -88,7 +88,7 @@ sequenceDiagram
     participant S as server
     participant D as Postgres
 
-    C->>S: POST /api/v1/users
+    C->>S: POST /v1/users
     Note over S: validates body against the schema
     S->>D: insert
     D-->>S: row
@@ -126,7 +126,7 @@ HTTP → controller → service → Drizzle → Postgres
 ```
 
 The controller validates and delegates. The service does the work and throws
-HTTP exceptions. `/api/v1` comes from app-wide setup, not from any controller.
+HTTP exceptions. `/v1` comes from app-wide setup, not from any controller.
 
 ## Running it
 

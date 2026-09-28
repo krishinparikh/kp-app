@@ -135,7 +135,7 @@ Inside `packages/ui`, components reach each other by **relative path**. The
 to its own `src`, so the import would resolve into the app.
 
 Every component in `packages/ui` needs four files in its own folder:
-`Name.tsx`, `Name.stories.tsx`, `Name.test.tsx`, `index.ts`. `ui:add` scaffolds
+`Name.tsx`, `Name.stories.tsx`, `Name.unit.test.tsx`, `index.ts`. `ui:add` scaffolds
 all four; fill in the stubs, then run `pnpm format`.
 
 Tests are Vitest + Testing Library against jsdom. Query by role, drive the UI
@@ -154,7 +154,7 @@ const users = await api.get(usersPath, userList)
 The schema from `@kp-app/shared` is always the second argument and drives the
 return type, so a server that drifts throws at the boundary instead of leaking
 bad data into the UI. Never call `axios` or `fetch` directly, never redeclare a
-shape in the app, and never hardcode `/api/v1` — the `*Path` exports carry it.
+shape in the app, and never hardcode `/v1` — the `*Path` exports carry it.
 
 Every failure rejects with axios's own `AxiosError` — there is no wrapper
 class and no error kinds of ours. Read it the way axios documents it:
@@ -189,7 +189,7 @@ the client could invent.
 
 Components never call `api.*` directly. `apps/web/src/hooks.ts` holds one
 hook per operation and the page renders what the hook returns. The users hooks
-are the worked example — full CRUD, with `hooks.test.tsx` beside them showing
+are the worked example — full CRUD, with `hooks.int.test.tsx` beside them showing
 each one driven, and `app/home/components/People.tsx` showing a query and a
 mutation on one screen: pending, error with a retry, empty, and a form whose
 success invalidates the list.

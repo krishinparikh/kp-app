@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { renderHook, waitFor } from '@testing-library/react'
 import MockAdapter from 'axios-mock-adapter'
-import { usersPath } from '@kp-app/shared'
+import { user, usersPath } from '@kp-app/shared'
 import { afterEach, beforeEach, describe, expect, it } from 'vitest'
 import type { ReactNode } from 'react'
 import { apiClient } from '@/lib/api.ts'
@@ -12,13 +12,15 @@ import {
   useUsers,
 } from './hooks.ts'
 
-const alice = {
+// Parsed, not asserted: a fixture that drifts from the contract fails here
+// rather than as a confusing assertion further down.
+const alice = user.parse({
   id: '11111111-1111-4111-8111-111111111111',
   firstName: 'Alice',
   lastName: 'Ng',
   email: 'alice@example.com',
   dob: '1990-01-01',
-}
+})
 
 let mock: MockAdapter
 let client: QueryClient

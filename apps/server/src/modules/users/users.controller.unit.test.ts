@@ -4,7 +4,7 @@ import { user, type User } from '@kp-app/shared'
 import { UsersController } from './users.controller.js'
 import { UsersService } from './users.service.js'
 
-// Wiring only — the service talks to a real database in test/users.e2e-spec.ts.
+// Wiring only — the service talks to a real database in test/users.e2e.test.ts.
 describe('UsersController', () => {
   let controller: UsersController
   const service = {

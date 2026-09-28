@@ -66,7 +66,7 @@ for (const file of added) {
 
   writeIfMissing(path.join(dir, 'index.ts'), `export * from './${name}.tsx'\n`)
   writeIfMissing(path.join(dir, `${name}.stories.tsx`), storyStub(name))
-  writeIfMissing(path.join(dir, `${name}.test.tsx`), testStub(name))
+  writeIfMissing(path.join(dir, `${name}.unit.test.tsx`), testStub(name))
 }
 
 // Every file sits at primitives/<Name>/<file>, so a sibling component is
@@ -91,7 +91,7 @@ rewriteRootBarrel()
 
 console.log(
   `Restructured: ${[...renames.values()].join(', ')}\n` +
-    'Fill in the generated .stories.tsx and .test.tsx files, then run `pnpm format`.',
+    'Fill in the generated .stories.tsx and .unit.test.tsx files, then run `pnpm format`.',
 )
 
 function writeIfMissing(file: string, contents: string) {

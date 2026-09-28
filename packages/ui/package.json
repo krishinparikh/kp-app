@@ -23,6 +23,8 @@
     "lint": "oxlint && node scripts/lint-tokens.ts src",
     "lint:tokens": "node scripts/lint-tokens.ts src",
     "test": "vitest run",
+    "test:unit": "vitest run .unit.test --passWithNoTests",
+    "test:int": "vitest run .int.test --passWithNoTests",
     "test:watch": "vitest",
     "typecheck": "tsc -b --noEmit",
     "storybook": "storybook dev -p 6006",

@@ -28,6 +28,16 @@
     "test": {
       "dependsOn": ["^build"]
     },
+    "test:unit": {
+      "dependsOn": ["^build"]
+    },
+    "test:int": {
+      "dependsOn": ["^build"]
+    },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "cache": false
+    },
     "storybook": {
       "cache": false,
       "persistent": true

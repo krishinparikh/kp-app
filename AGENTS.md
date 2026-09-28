@@ -7,7 +7,6 @@ what you're about to change before you change it.
 ## Mandatory Rules
 
 - **Brevity:** Make *everything* extremely concise and clear — your responses, documentation, comments, etc.
-- **Naming:** PascalCase for `.tsx`, kebab-case for `.ts`, snake_case for `.py`.
 
 
 ## docs/
@@ -21,9 +20,11 @@ and stop when you know enough for the task.
 | [product/prd.md](docs/product/prd.md)                                 | You need to know what the product does, or what's in scope   | Empty   |
 | [architecture/high-level.md](docs/architecture/high-level.md)         | You need the shape of the system before placing something    | Written |
 | [architecture/file-structure.md](docs/architecture/file-structure.md) | You're unsure which package or folder a file belongs in      | Written |
+| [guides/code-style.md](docs/guides/code-style.md)                     | Naming anything — a file, a schema, a constant               | Written |
 | [product/user-stories.md](docs/product/user-stories.md)               | You need a feature's expected behaviour from the user's side | Empty   |
 | [guides/frontend.md](docs/guides/frontend.md)                         | Building **any** UI — a page, a component, a style           | Written |
 | [guides/backend.md](docs/guides/backend.md)                           | Touching the **API** — an endpoint, a schema, a table        | Written |
+| [guides/testing.md](docs/guides/testing.md)                           | Writing or reviewing a test — what counts as worth keeping   | Written |
 | [architecture/environments.md](docs/architecture/environments.md)     | Working with env vars, ports, or local vs Docker vs deployed | Written |
 | [architecture/db.md](docs/architecture/db.md)                         | You need the data model without reading `schema.ts`          | Empty   |
 | [architecture/ci.md](docs/architecture/ci.md)                         | A pipeline is failing, or you're adding a check              | Empty   |

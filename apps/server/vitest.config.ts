@@ -8,6 +8,8 @@ export default defineConfig({
   test: {
     globals: true,
     root: './',
-    include: ['**/*.spec.ts'],
+    // Fast suites only. E2E has its own config so it can't be pulled
+    // into a run that has no database.
+    include: ['**/*.{unit,int}.test.ts'],
   },
 })
